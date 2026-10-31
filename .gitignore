@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables and secrets - NEVER COMMIT SECRETS
+.env
+.env*.local
+.env.production
+.env.development
+!.env.example
+
+# Production and build outputs
+.next/
+out/
+build/
+dist/
+
+# Debug and runtime logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing and coverage
+coverage/
+.nyc_output/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Local cache
+*.tsbuildinfo
+next-env.d.ts
+
+# Documentation & Markdown files - Keep local only, do not push
+doc/
+docs/
+*.md
