@@ -9,6 +9,10 @@ node_modules/
 .pnp
 .pnp.js
 
+# Documentation
+docs/
+doc/
+
 # Environment variables and secrets - NEVER COMMIT SECRETS
 .env
 .env*.local
