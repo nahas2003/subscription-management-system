@@ -1,6 +1,8 @@
 # Documentation - local reference only, do not track in git
 docs/
 doc/
+README.md
+*.md
 
 # Dependencies
 node_modules/
