@@ -6,6 +6,7 @@
 
 import { discountService } from '@/features/discounts/discount-service';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { NextResponse } from 'next/server';
 
 export async function handleGetDiscounts(onlyActiveStr?: string) {
   try {
@@ -45,5 +46,22 @@ export async function handlePostDiscount(payload: any) {
     return successResponse(created, 'Discount rule created successfully');
   } catch (err: any) {
     return errorResponse(err.message || 'Failed to create discount', 'BAD_REQUEST');
+  }
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const onlyActive = searchParams.get('onlyActive') || undefined;
+  const res = await handleGetDiscounts(onlyActive);
+  return NextResponse.json(res, { status: res.success ? 200 : 400 });
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const res = await handlePostDiscount(body);
+    return NextResponse.json(res, { status: res.success ? 200 : 400 });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: { message: err.message } }, { status: 400 });
   }
 }

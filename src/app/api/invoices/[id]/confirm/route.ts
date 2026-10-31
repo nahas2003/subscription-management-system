@@ -7,6 +7,7 @@
 import { invoiceRepository } from '@/features/invoices/invoice-repository';
 import { transitionToConfirmed } from '@/features/invoices/invoice-service';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { NextResponse } from 'next/server';
 
 export async function handleConfirmInvoice(invoiceId: string) {
   try {
@@ -22,4 +23,13 @@ export async function handleConfirmInvoice(invoiceId: string) {
   } catch (err: any) {
     return errorResponse(err.message || 'Failed to confirm invoice', 'BAD_REQUEST');
   }
+}
+
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const invoiceId = params.id;
+  const res = await handleConfirmInvoice(invoiceId);
+  return NextResponse.json(res, { status: res.success ? 200 : 400 });
 }

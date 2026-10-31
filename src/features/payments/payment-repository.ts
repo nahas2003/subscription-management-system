@@ -17,6 +17,61 @@ export interface PaymentFilter {
 let inMemoryPayments: Map<string, Payment> = new Map();
 let inMemoryAllocations: Map<string, PaymentAllocation[]> = new Map();
 
+function seedInitialPayments() {
+  const p1: Payment = {
+    id: 'pay-001',
+    payment_number: 'PAY-2026-001',
+    customer_id: 'cust-002',
+    invoice_id: 'inv-002',
+    amount: 35400,
+    payment_method: 'bank_transfer',
+    payment_date: '2026-10-12T16:00:00Z',
+    reference: 'HDFC-NEFT-8839201',
+    status: 'confirmed',
+    recorded_by: 'finance_admin',
+    created_at: '2026-10-12T16:00:00Z',
+  };
+
+  const p2: Payment = {
+    id: 'pay-002',
+    payment_number: 'PAY-2026-002',
+    customer_id: 'cust-003',
+    invoice_id: 'inv-003',
+    amount: 5000,
+    payment_method: 'upi',
+    payment_date: '2026-10-05T11:00:00Z',
+    reference: 'UPI-RR-9048382',
+    status: 'confirmed',
+    recorded_by: 'finance_admin',
+    created_at: '2026-10-05T11:00:00Z',
+  };
+
+  inMemoryPayments.set(p1.id, p1);
+  inMemoryPayments.set(p2.id, p2);
+
+  inMemoryAllocations.set('inv-002', [
+    {
+      id: 'alloc-001',
+      payment_id: 'pay-001',
+      invoice_id: 'inv-002',
+      amount: 35400,
+      allocated_at: '2026-10-12T16:00:00Z',
+    },
+  ]);
+
+  inMemoryAllocations.set('inv-003', [
+    {
+      id: 'alloc-002',
+      payment_id: 'pay-002',
+      invoice_id: 'inv-003',
+      amount: 5000,
+      allocated_at: '2026-10-05T11:00:00Z',
+    },
+  ]);
+}
+
+seedInitialPayments();
+
 export const paymentRepository = {
   reset() {
     inMemoryPayments.clear();

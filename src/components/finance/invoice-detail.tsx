@@ -11,6 +11,7 @@ interface InvoiceDetailProps {
   onConfirm?: (invoiceId: string) => void;
   onCancel?: (invoiceId: string) => void;
   onOpenPaymentModal?: (invoice: Invoice) => void;
+  onPrint?: (invoice: Invoice) => void;
   onClose?: () => void;
 }
 
@@ -21,6 +22,7 @@ export const InvoiceDetail: React.FC<InvoiceDetailProps> = ({
   onConfirm,
   onCancel,
   onOpenPaymentModal,
+  onPrint,
   onClose,
 }) => {
   const isOverdue = isInvoiceOverdue(invoice);
@@ -42,6 +44,15 @@ export const InvoiceDetail: React.FC<InvoiceDetailProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
+          {onPrint && (
+            <button
+              onClick={() => onPrint(invoice)}
+              className="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
+            >
+              <span>🖨️ Tax Invoice</span>
+            </button>
+          )}
+
           {invoice.status === 'draft' && onConfirm && (
             <button
               onClick={() => onConfirm(invoice.id)}

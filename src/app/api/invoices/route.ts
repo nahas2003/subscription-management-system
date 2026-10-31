@@ -7,6 +7,7 @@
 import { createInvoice } from '@/features/invoices/invoice-service';
 import { invoiceRepository } from '@/features/invoices/invoice-repository';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { NextResponse } from 'next/server';
 
 export async function handleGetInvoices(queryParams: Record<string, string | undefined>) {
   try {
@@ -60,5 +61,25 @@ export async function handlePostInvoice(payload: any) {
     return successResponse(saved, 'Invoice created successfully');
   } catch (err: any) {
     return errorResponse(err.message || 'Failed to create invoice', 'BAD_REQUEST');
+  }
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const queryParams: Record<string, string | undefined> = {};
+  searchParams.forEach((val, key) => {
+    queryParams[key] = val;
+  });
+  const res = await handleGetInvoices(queryParams);
+  return NextResponse.json(res, { status: res.success ? 200 : 400 });
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const res = await handlePostInvoice(body);
+    return NextResponse.json(res, { status: res.success ? 200 : 400 });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: { message: err.message } }, { status: 400 });
   }
 }
