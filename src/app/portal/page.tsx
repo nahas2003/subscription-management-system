@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatCard } from '@/components/ui/StatCard';
@@ -8,8 +8,9 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Repeat, Calendar, Receipt, CreditCard, ExternalLink, ShieldCheck } from 'lucide-react';
+import { Repeat, Calendar, Receipt, CreditCard, ExternalLink, ShieldCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { getCustomerPortalData, PortalOverviewData } from '@/lib/actions/portal';
 
 interface CustomerSubscription {
   id: string;
@@ -82,6 +83,66 @@ const mockInvoices: CustomerInvoice[] = [
 ];
 
 export default function CustomerPortalOverview() {
+  const [loading, setLoading] = useState(true);
+  const [portalData, setPortalData] = useState<PortalOverviewData | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getCustomerPortalData();
+        setPortalData(data);
+      } catch (err) {
+        console.error('Error fetching portal data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const hasRealCustomer = portalData?.customer !== null && portalData?.customer !== undefined;
+
+  const displaySubscriptions: CustomerSubscription[] =
+    hasRealCustomer && portalData.subscriptions.length > 0
+      ? portalData.subscriptions.map((s) => ({
+          id: s.id,
+          planName: s.subscription_number,
+          productName: 'BrightLoop SaaS License',
+          frequency: 'Monthly',
+          price: 15000,
+          startDate: s.start_date || s.created_at.slice(0, 10),
+          nextRenewal: s.next_billing_date || s.expiry_date || '2027-01-01',
+          status: s.status === 'active' ? 'Active' : s.status === 'draft' ? 'Draft' : 'Closed',
+        }))
+      : mockSubscriptions;
+
+  const displayInvoices: CustomerInvoice[] =
+    hasRealCustomer && portalData.invoices.length > 0
+      ? portalData.invoices.map((i) => ({
+          id: i.id,
+          invoiceNumber: i.invoice_number,
+          dueDate: i.due_date || i.invoice_date,
+          total: i.total,
+          balanceDue: i.balance_due,
+          status: i.status === 'paid' ? 'Paid' : i.status === 'confirmed' ? 'Confirmed' : 'Draft',
+        }))
+      : mockInvoices;
+
+  const activeSubsCount = hasRealCustomer
+    ? portalData.summary.activeSubscriptionsCount
+    : mockSubscriptions.filter((s) => s.status === 'Active').length;
+
+  const unpaidInvoicesCount = hasRealCustomer
+    ? portalData.summary.pendingInvoicesCount
+    : mockInvoices.filter((i) => i.balanceDue > 0).length;
+
+  const outstandingTotal = hasRealCustomer
+    ? portalData.summary.totalOutstandingAmount
+    : 17700;
+
+  const customerName = portalData?.customer?.name || 'Apex Technologies Pvt Ltd';
+  const customerEmail = portalData?.customer?.email || 'billing@apextech.in';
+
   const subColumns: Column<CustomerSubscription>[] = [
     {
       header: 'Product / Plan',
@@ -143,7 +204,7 @@ export default function CustomerPortalOverview() {
     <AppShell
       role="customer"
       currentPath="/portal"
-      user={{ name: 'Apex Technologies Pvt Ltd', email: 'billing@apextech.in', role: 'customer' }}
+      user={{ name: customerName, email: customerEmail, role: 'customer' }}
       title="Customer Portal"
     >
       <div className="space-y-6">
@@ -162,7 +223,7 @@ export default function CustomerPortalOverview() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Active Subscriptions"
-            value="2"
+            value={activeSubsCount.toString()}
             subtitle="All services running normally"
             icon={Repeat}
           />
@@ -174,13 +235,13 @@ export default function CustomerPortalOverview() {
           />
           <StatCard
             title="Unpaid Invoices"
-            value="1"
-            subtitle="Due in 5 days"
+            value={unpaidInvoicesCount.toString()}
+            subtitle={unpaidInvoicesCount > 0 ? 'Action required' : 'All clear'}
             icon={Receipt}
           />
           <StatCard
             title="Total Outstanding"
-            value={<MoneyDisplay amount={17700} size="xl" />}
+            value={<MoneyDisplay amount={outstandingTotal} size="xl" />}
             subtitle="Current billing cycle"
             icon={CreditCard}
           />
@@ -201,7 +262,7 @@ export default function CustomerPortalOverview() {
 
           <DataTable
             columns={subColumns}
-            data={mockSubscriptions}
+            data={displaySubscriptions}
             keyExtractor={(item) => item.id}
           />
         </div>
@@ -221,7 +282,7 @@ export default function CustomerPortalOverview() {
 
           <DataTable
             columns={invColumns}
-            data={mockInvoices}
+            data={displayInvoices}
             keyExtractor={(item) => item.id}
           />
         </div>

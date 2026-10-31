@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
@@ -9,6 +9,7 @@ import { DateDisplay } from '@/components/ui/DateDisplay';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { Button } from '@/components/ui/Button';
 import { Receipt, Eye, FileText, Download, CheckCircle2 } from 'lucide-react';
+import { getCustomerPortalData } from '@/lib/actions/portal';
 
 interface InvoiceDetailItem {
   id: string;
@@ -102,6 +103,49 @@ const mockInvoices: InvoiceDetailItem[] = [
 
 export default function CustomerInvoicesPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceDetailItem | null>(null);
+  const [invoices, setInvoices] = useState<InvoiceDetailItem[]>(mockInvoices);
+  const [customerName, setCustomerName] = useState('Apex Technologies Pvt Ltd');
+  const [customerEmail, setCustomerEmail] = useState('billing@apextech.in');
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getCustomerPortalData();
+        if (data?.customer) {
+          setCustomerName(data.customer.name);
+          setCustomerEmail(data.customer.email);
+        }
+        if (data?.invoices && data.invoices.length > 0) {
+          const mapped: InvoiceDetailItem[] = data.invoices.map((i) => ({
+            id: i.id,
+            invoiceNumber: i.invoice_number,
+            issueDate: i.invoice_date,
+            dueDate: i.due_date || i.invoice_date,
+            subtotal: i.subtotal,
+            taxAmount: i.tax_total,
+            discountAmount: i.discount_total || 0,
+            total: i.total,
+            amountPaid: i.amount_paid ?? (i.total - (i.balance_due || 0)),
+            balanceDue: i.balance_due,
+            status: i.status === 'paid' ? 'Paid' : i.status === 'confirmed' ? 'Confirmed' : 'Draft',
+            lines: [
+              {
+                description: `Recurring Subscription Billing Statement (${i.invoice_number})`,
+                qty: 1,
+                unitPrice: i.subtotal,
+                taxRate: 0.18,
+                lineTotal: i.total,
+              },
+            ],
+          }));
+          setInvoices(mapped);
+        }
+      } catch (err) {
+        console.error('Error loading invoices:', err);
+      }
+    }
+    loadData();
+  }, []);
 
   const columns: Column<InvoiceDetailItem>[] = [
     {
@@ -166,7 +210,7 @@ export default function CustomerInvoicesPage() {
     <AppShell
       role="customer"
       currentPath="/portal/invoices"
-      user={{ name: 'Apex Technologies Pvt Ltd', email: 'billing@apextech.in', role: 'customer' }}
+      user={{ name: customerName, email: customerEmail, role: 'customer' }}
       title="My Invoices"
     >
       <div className="space-y-6">
@@ -181,7 +225,7 @@ export default function CustomerInvoicesPage() {
 
         <DataTable
           columns={columns}
-          data={mockInvoices}
+          data={invoices}
           keyExtractor={(item) => item.id}
         />
 
@@ -203,7 +247,7 @@ export default function CustomerInvoicesPage() {
                     <StatusBadge status={selectedInvoice.status} size="md" />
                   </div>
                   <div className="text-xs text-slate-500">
-                    Billed to: <strong className="text-slate-700">Apex Technologies Pvt Ltd</strong> (GSTIN: 32AAAAA0000A1Z5)
+                    Billed to: <strong className="text-slate-700">{customerName}</strong>
                   </div>
                 </div>
 
