@@ -37,12 +37,15 @@ export interface InvoiceLine {
   invoice_id: string;
   product_id: string | null;
   variant_id?: string | null;
-  description_snapshot: string;
+  description_snapshot?: string;
+  description?: string;
   quantity: number; // numeric(12,3)
   unit_price: number; // numeric(14,2) in INR
   discount_amount: number; // numeric(14,2)
-  tax_rate_snapshot: number; // numeric(7,4) e.g., 0.18 for 18% GST
-  tax_amount: number; // numeric(14,2)
+  tax_rate_snapshot?: number; // numeric(7,4) e.g., 0.18 for 18% GST
+  tax_rate?: number;
+  tax_amount: number;
+  taxable_amount?: number; // numeric(14,2)
   line_total: number; // numeric(14,2)
 }
 
@@ -89,12 +92,16 @@ export type PaymentMethod = 'bank_transfer' | 'upi' | 'credit_card' | 'cash' | '
 
 export interface Payment {
   id: string;
-  payment_reference: string;
+  payment_reference?: string;
+  payment_number?: string;
+  invoice_id?: string | null;
+  reference?: string | null;
+  status?: string;
   customer_id: string;
   payment_method: PaymentMethod;
   amount: number; // INR, strictly positive
   payment_date: string; // ISO / YYYY-MM-DD
-  note: string | null;
+  note?: string | null;
   recorded_by: string; // profiles.id (Staff / Admin)
   created_at: string;
 }
@@ -103,8 +110,10 @@ export interface PaymentAllocation {
   id: string;
   payment_id: string;
   invoice_id: string;
-  amount_allocated: number; // INR, strictly positive
-  created_at: string;
+  amount_allocated: number;
+  amount?: number;
+  allocated_at?: string;
+  created_at?: string;
 }
 
 /**

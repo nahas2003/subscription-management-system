@@ -198,6 +198,7 @@ export interface QuotationLine {
   variant_id: string | null;
   plan_id?: string | null;
   description_snapshot: string;
+  description?: string;
   quantity: number;
   unit_price: number;
   discount_amount?: number;
@@ -329,6 +330,7 @@ export interface InvoiceLine {
   discount_amount: number;
   tax_rate_snapshot: number;
   tax_amount: number;
+  taxable_amount?: number;
   line_total: number;
 }
 
@@ -337,6 +339,8 @@ export type PaymentMethod = 'bank_transfer' | 'upi' | 'credit_card' | 'cash' | '
 export interface Payment {
   id: string;
   payment_reference: string;
+  reference?: string | null;
+  status?: string;
   customer_id: string;
   payment_method: PaymentMethod;
   amount: number;
@@ -351,6 +355,8 @@ export interface PaymentAllocation {
   payment_id: string;
   invoice_id: string;
   amount_allocated: number;
+  allocated_at?: string;
+  amount?: number;
   created_at: string;
 }
 

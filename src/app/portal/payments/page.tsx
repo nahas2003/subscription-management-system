@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
+import { getCustomerPortalData } from '@/lib/actions/portal';
 
 interface PaymentHistoryItem {
   id: string;
@@ -15,7 +16,7 @@ interface PaymentHistoryItem {
   paymentDate: string;
   amount: number;
   method: string;
-  status: 'Paid';
+  status: 'Paid' | 'Confirmed';
 }
 
 const mockPayments: PaymentHistoryItem[] = [
@@ -40,6 +41,44 @@ const mockPayments: PaymentHistoryItem[] = [
 ];
 
 export default function CustomerPaymentsPage() {
+  const [payments, setPayments] = useState<PaymentHistoryItem[]>(mockPayments);
+  const [customerName, setCustomerName] = useState('Apex Technologies Pvt Ltd');
+  const [customerEmail, setCustomerEmail] = useState('billing@apextech.in');
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getCustomerPortalData();
+        if (data?.customer) {
+          setCustomerName(data.customer.name);
+          setCustomerEmail(data.customer.email);
+        }
+        if (data?.payments && data.payments.length > 0) {
+          const mapped: PaymentHistoryItem[] = data.payments.map((p) => ({
+            id: p.id,
+            paymentRef: (p as any).payment_number || (p as any).payment_reference || `PAY-${p.id.slice(0, 8)}`,
+            invoiceNumber: (p as any).invoice_id ? `INV-${(p as any).invoice_id.slice(0, 8)}` : 'On Account',
+            paymentDate: p.payment_date,
+            method:
+              p.payment_method === 'bank_transfer'
+                ? 'Bank Transfer (NEFT)'
+                : p.payment_method === 'upi'
+                ? 'UPI Merchant Intent'
+                : p.payment_method === 'credit_card'
+                ? 'Credit Card'
+                : 'Direct Settlement',
+            amount: p.amount,
+            status: 'Confirmed',
+          }));
+          setPayments(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to load customer payments:', err);
+      }
+    }
+    loadData();
+  }, []);
+
   const columns: Column<PaymentHistoryItem>[] = [
     {
       header: 'Payment Reference',
@@ -83,13 +122,13 @@ export default function CustomerPaymentsPage() {
     <AppShell
       role="customer"
       currentPath="/portal/payments"
-      user={{ name: 'Apex Technologies Pvt Ltd', email: 'billing@apextech.in', role: 'customer' }}
+      user={{ name: customerName, email: customerEmail, role: 'customer' }}
       title="Payment History"
     >
       <div className="space-y-6">
         <PageHeader
-          title="Payment History"
-          description="Record of verified manual and electronic payments allocated against your account."
+          title="Payment Receipts & History"
+          description="Verified bank allocations, electronic receipts, and credit confirmations against past invoices."
           breadcrumbs={[
             { label: 'Portal', href: '/portal' },
             { label: 'Payments' },
@@ -98,7 +137,7 @@ export default function CustomerPaymentsPage() {
 
         <DataTable
           columns={columns}
-          data={mockPayments}
+          data={payments}
           keyExtractor={(item) => item.id}
         />
       </div>

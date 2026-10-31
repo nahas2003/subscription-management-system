@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -8,7 +8,8 @@ import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { Button } from '@/components/ui/Button';
-import { Download } from 'lucide-react';
+import { Play, Download, CheckCircle2 } from 'lucide-react';
+import { store } from '@/lib/store';
 
 interface AdminInvoiceItem {
   id: string;
@@ -80,6 +81,74 @@ const mockInvoices: AdminInvoiceItem[] = [
 ];
 
 export default function InvoicesPage() {
+  const [invoices, setInvoices] = useState<AdminInvoiceItem[]>(mockInvoices);
+  const [isLoading, setIsLoading] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
+
+  const fetchInvoices = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/invoices');
+      const json = await res.json();
+      if (json.success && json.data.length > 0) {
+        const today = new Date().toISOString().slice(0, 10);
+        const mapped: AdminInvoiceItem[] = json.data.map((inv: any) => {
+          let derivedStatus: InvoiceStatus = 'Confirmed';
+          if (inv.status === 'paid') derivedStatus = 'Paid';
+          else if (inv.status === 'draft') derivedStatus = 'Draft';
+          else if (inv.balance_due > 0 && inv.due_date < today) derivedStatus = 'Overdue';
+
+          const cust = store.getCustomerById(inv.customer_id);
+          const customerName = cust ? cust.name : `Customer (${inv.customer_id})`;
+
+          return {
+            id: inv.id,
+            invoiceNumber: inv.invoice_number,
+            customerName,
+            issueDate: inv.invoice_date,
+            dueDate: inv.due_date,
+            subtotal: inv.subtotal,
+            taxAmount: inv.tax_total,
+            total: inv.total,
+            amountPaid: inv.amount_paid,
+            balanceDue: inv.balance_due,
+            status: derivedStatus,
+          };
+        });
+        setInvoices(mapped);
+      }
+    } catch (err) {
+      console.error('Failed to load admin invoices:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
+  const handleRunBilling = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/billing/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const json = await res.json();
+      if (json.success) {
+        const count = json.data.summary.invoices_generated.length;
+        setNotification(`Recurring billing complete: ${count} invoice(s) generated.`);
+        await fetchInvoices();
+      }
+    } catch (err: any) {
+      setNotification(`Billing execution error: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const columns: Column<AdminInvoiceItem>[] = [
     {
       header: 'Invoice #',
@@ -116,7 +185,7 @@ export default function InvoicesPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#7a9779]'}
         />
       ),
     },
@@ -136,22 +205,38 @@ export default function InvoicesPage() {
       <div className="space-y-6">
         <PageHeader
           title="Tax Invoices & Accounts Receivable"
-          description="Detailed breakdown of recurring and one-off tax invoices, balance settlements, and statutory 18% GST."
+          description="Manage generated customer invoices, monitor payment settlements, and trigger idempotent billing runs."
           action={
-            <Button
-              variant="outline"
-              size="md"
-              leftIcon={<Download className="h-4 w-4" />}
-            >
-              Export GSTR-1 CSV
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleRunBilling}
+                leftIcon={<Play className="h-4 w-4" />}
+              >
+                Run Billing Cycle
+              </Button>
+            </div>
           }
         />
 
+        {notification && (
+          <div className="p-3 bg-[#eef5ee] border border-[#c5d8c4] text-[#2b4c2b] rounded-[7.5px] text-xs font-medium flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#7a9779]" />
+              <span>{notification}</span>
+            </div>
+            <button onClick={() => setNotification(null)} className="text-[#50463c] hover:text-[#211b15]">
+              ✕
+            </button>
+          </div>
+        )}
+
         <DataTable
           columns={columns}
-          data={mockInvoices}
+          data={invoices}
           keyExtractor={(item) => item.id}
+          isLoading={isLoading}
         />
       </div>
     </AppShell>
