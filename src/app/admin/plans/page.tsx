@@ -4,10 +4,10 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
-import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, Calendar, ShieldCheck } from 'lucide-react';
+import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
+import { Button } from '@/components/ui/Button';
+import { Plus } from 'lucide-react';
 
 interface SubscriptionPlan {
   id: string;
@@ -15,56 +15,56 @@ interface SubscriptionPlan {
   frequency: 'Daily' | 'Weekly' | 'Monthly' | 'Yearly';
   basePrice: number;
   minQty: number;
+  status: 'Active' | 'Closed';
   renewalRule: string;
   pauseAllowed: boolean;
   earlyCloseAllowed: boolean;
-  status: 'Active' | 'Draft';
 }
 
 const mockPlans: SubscriptionPlan[] = [
   {
     id: 'plan-01',
-    name: 'Enterprise Annual License',
+    name: 'Enterprise Annual Plan',
     frequency: 'Yearly',
     basePrice: 100000,
     minQty: 1,
-    renewalRule: 'Automatic annual renewal on anniversary',
-    pauseAllowed: false,
-    earlyCloseAllowed: true,
     status: 'Active',
+    renewalRule: 'Auto-renews every 12 months with 30-day notice window',
+    pauseAllowed: true,
+    earlyCloseAllowed: false,
   },
   {
     id: 'plan-02',
-    name: 'Pro Monthly Support Plan',
+    name: 'Pro Monthly Support',
     frequency: 'Monthly',
     basePrice: 15000,
     minQty: 1,
-    renewalRule: 'Billed 1st of every month',
+    status: 'Active',
+    renewalRule: 'Billed on 1st of every month, 7-day payment grace period',
     pauseAllowed: true,
     earlyCloseAllowed: true,
-    status: 'Active',
   },
   {
     id: 'plan-03',
-    name: 'Weekly Sprint Retainer',
-    frequency: 'Weekly',
-    basePrice: 5000,
-    minQty: 2,
-    renewalRule: 'Billed every Monday',
-    pauseAllowed: true,
-    earlyCloseAllowed: false,
+    name: 'Standard Monthly Plan',
+    frequency: 'Monthly',
+    basePrice: 20000,
+    minQty: 1,
     status: 'Active',
+    renewalRule: 'Billed monthly on subscription creation anniversary',
+    pauseAllowed: false,
+    earlyCloseAllowed: true,
   },
   {
     id: 'plan-04',
-    name: 'Daily Dedicated Resource',
-    frequency: 'Daily',
-    basePrice: 1200,
-    minQty: 5,
-    renewalRule: 'Pre-paid daily allocation',
+    name: 'Starter Weekly Trial',
+    frequency: 'Weekly',
+    basePrice: 3000,
+    minQty: 1,
+    status: 'Active',
+    renewalRule: 'Billed every 7 days up to maximum 4 cycles',
     pauseAllowed: false,
     earlyCloseAllowed: true,
-    status: 'Draft',
   },
 ];
 
@@ -74,35 +74,35 @@ export default function PlansPage() {
       header: 'Plan Name',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.name}</div>
-          <div className="text-xs text-slate-500">{item.renewalRule}</div>
+          <div className="font-bold text-[#211b15]">{item.name}</div>
+          <div className="text-xs text-[#96897b]">{item.renewalRule}</div>
         </div>
       ),
     },
     {
       header: 'Billing Frequency',
       cell: (item) => (
-        <span className="inline-flex rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-[#4F46E5]">
+        <span className="inline-flex rounded-[3.75px] bg-[#fdf6ed] border border-[#e8b672]/60 px-2 py-0.5 text-xs font-bold text-[#8c591b]">
           {item.frequency}
         </span>
       ),
     },
     {
       header: 'Plan Price',
-      cell: (item) => <MoneyDisplay amount={item.basePrice} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.basePrice} size="sm" className="font-bold" />,
     },
     {
       header: 'Min Quantity',
       accessorKey: 'minQty',
       align: 'center',
-      className: 'font-mono text-xs',
+      className: 'font-mono text-xs font-bold text-[#211b15]',
     },
     {
       header: 'Lifecycle Rules',
       cell: (item) => (
-        <div className="text-xs space-y-0.5 text-slate-600">
-          <div>Pause: <span className={item.pauseAllowed ? 'text-emerald-700 font-medium' : 'text-slate-400'}>{item.pauseAllowed ? 'Allowed' : 'Disabled'}</span></div>
-          <div>Early Close: <span className={item.earlyCloseAllowed ? 'text-emerald-700 font-medium' : 'text-slate-400'}>{item.earlyCloseAllowed ? 'Allowed' : 'Disabled'}</span></div>
+        <div className="text-xs space-y-0.5 text-[#50463c]">
+          <div>Pause: <span className={item.pauseAllowed ? 'text-[#2b4c2b] font-bold' : 'text-[#96897b]'}>{item.pauseAllowed ? 'Allowed' : 'Disabled'}</span></div>
+          <div>Early Close: <span className={item.earlyCloseAllowed ? 'text-[#2b4c2b] font-bold' : 'text-[#96897b]'}>{item.earlyCloseAllowed ? 'Allowed' : 'Disabled'}</span></div>
         </div>
       ),
     },
@@ -129,7 +129,7 @@ export default function PlansPage() {
               size="md"
               leftIcon={<Plus className="h-4 w-4" />}
             >
-              Create New Plan
+              New Plan
             </Button>
           }
         />

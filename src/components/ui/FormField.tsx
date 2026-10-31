@@ -21,21 +21,21 @@ export const FormField: React.FC<FormFieldProps> = ({
   children,
 }) => {
   return (
-    <div className={cn('flex flex-col gap-1.5 w-full', className)}>
+    <div className={cn('flex flex-col gap-1.5 w-full font-sans', className)}>
       {label && (
         <label
           htmlFor={htmlFor}
-          className="text-sm font-medium text-slate-800 flex items-center gap-1"
+          className="text-xs font-bold uppercase tracking-wider text-[#211b15] flex items-center gap-1"
         >
           {label}
-          {required && <span className="text-red-500 text-xs font-bold" aria-hidden="true">*</span>}
+          {required && <span className="text-[#e8b672] font-bold" aria-hidden="true">*</span>}
         </label>
       )}
       {children}
       {errorMessage ? (
-        <p className="text-xs text-red-600 font-medium">{errorMessage}</p>
+        <p className="text-xs text-[#b83a2b] font-medium">{errorMessage}</p>
       ) : helperText ? (
-        <p className="text-xs text-slate-500">{helperText}</p>
+        <p className="text-xs text-[#96897b]">{helperText}</p>
       ) : null}
     </div>
   );

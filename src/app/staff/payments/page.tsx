@@ -1,44 +1,52 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus } from 'lucide-react';
 
 interface StaffPaymentItem {
   id: string;
   paymentRef: string;
   invoiceNumber: string;
   customerName: string;
-  amount: number;
   paymentDate: string;
+  amount: number;
   method: string;
-  status: 'Confirmed' | 'Paid';
+  status: 'Paid' | 'Confirmed';
 }
 
-const mockStaffPayments: StaffPaymentItem[] = [
+const mockPayments: StaffPaymentItem[] = [
   {
-    id: 'pay-01',
-    paymentRef: 'PAY-2026-0019-01',
+    id: 'sp-01',
+    paymentRef: 'PAY-2026-0031',
     invoiceNumber: 'INV-2026-0019',
     customerName: 'Apex Technologies Pvt Ltd',
+    paymentDate: '2026-10-04',
     amount: 17700,
-    paymentDate: '2026-10-02',
     method: 'Bank Transfer (NEFT)',
-    status: 'Confirmed',
+    status: 'Paid',
   },
   {
-    id: 'pay-02',
-    paymentRef: 'PAY-2026-0022-01',
-    invoiceNumber: 'INV-2026-0022',
+    id: 'sp-02',
+    paymentRef: 'PAY-2026-0028',
+    invoiceNumber: 'INV-2026-0014',
     customerName: 'Kochi Logistics Hub',
-    amount: 28320,
-    paymentDate: '2026-10-12',
+    paymentDate: '2026-09-22',
+    amount: 23600,
+    method: 'Corporate Cheque',
+    status: 'Paid',
+  },
+  {
+    id: 'sp-03',
+    paymentRef: 'PAY-2026-0033',
+    invoiceNumber: 'INV-2026-0045',
+    customerName: 'Kerala Ayurveda Solutions',
+    paymentDate: '2026-10-29',
+    amount: 9440,
     method: 'UPI Merchant Intent',
     status: 'Confirmed',
   },
@@ -49,7 +57,7 @@ export default function StaffPaymentsPage() {
     {
       header: 'Payment Reference',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-slate-800">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.paymentRef}
         </span>
       ),
@@ -57,7 +65,7 @@ export default function StaffPaymentsPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs text-indigo-600 font-medium">
+        <span className="font-mono text-xs text-[#211b15] font-medium">
           {item.invoiceNumber}
         </span>
       ),
@@ -65,7 +73,7 @@ export default function StaffPaymentsPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Payment Date',
@@ -74,11 +82,11 @@ export default function StaffPaymentsPage() {
     {
       header: 'Method',
       accessorKey: 'method',
-      className: 'text-xs text-slate-600',
+      className: 'text-xs text-[#50463c]',
     },
     {
       header: 'Amount Credited',
-      cell: (item) => <MoneyDisplay amount={item.amount} size="sm" className="font-bold text-emerald-700" />,
+      cell: (item) => <MoneyDisplay amount={item.amount} size="sm" className="font-bold text-[#2b4c2b]" />,
     },
     {
       header: 'Status',
@@ -95,13 +103,13 @@ export default function StaffPaymentsPage() {
     >
       <div className="space-y-6">
         <PageHeader
-          title="Payment Records"
-          description="View and verify recorded customer payments."
+          title="Recorded Customer Payments"
+          description="Verified bank transactions and offline cheques processed by staff members."
         />
 
         <DataTable
           columns={columns}
-          data={mockStaffPayments}
+          data={mockPayments}
           keyExtractor={(item) => item.id}
         />
       </div>

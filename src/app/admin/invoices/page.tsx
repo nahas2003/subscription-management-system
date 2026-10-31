@@ -4,11 +4,11 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
-import { Plus, Receipt, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Download } from 'lucide-react';
 
 interface AdminInvoiceItem {
   id: string;
@@ -26,10 +26,10 @@ interface AdminInvoiceItem {
 
 const mockInvoices: AdminInvoiceItem[] = [
   {
-    id: 'inv-01',
+    id: 'inv-101',
     invoiceNumber: 'INV-2026-0042',
     customerName: 'Apex Technologies Pvt Ltd',
-    issueDate: '2026-10-25',
+    issueDate: '2026-10-22',
     dueDate: '2026-11-05',
     subtotal: 15000,
     taxAmount: 2700,
@@ -39,10 +39,10 @@ const mockInvoices: AdminInvoiceItem[] = [
     status: 'Confirmed',
   },
   {
-    id: 'inv-02',
+    id: 'inv-102',
     invoiceNumber: 'INV-2026-0038',
     customerName: 'Malabar Retailers Ltd',
-    issueDate: '2026-10-05',
+    issueDate: '2026-10-06',
     dueDate: '2026-10-20',
     subtotal: 30000,
     taxAmount: 5400,
@@ -52,10 +52,10 @@ const mockInvoices: AdminInvoiceItem[] = [
     status: 'Overdue',
   },
   {
-    id: 'inv-03',
+    id: 'inv-103',
     invoiceNumber: 'INV-2026-0019',
     customerName: 'Apex Technologies Pvt Ltd',
-    issueDate: '2026-09-25',
+    issueDate: '2026-09-21',
     dueDate: '2026-10-05',
     subtotal: 15000,
     taxAmount: 2700,
@@ -65,15 +65,15 @@ const mockInvoices: AdminInvoiceItem[] = [
     status: 'Paid',
   },
   {
-    id: 'inv-04',
-    invoiceNumber: 'INV-2026-0005',
-    customerName: 'Apex Technologies Pvt Ltd',
-    issueDate: '2026-01-15',
-    dueDate: '2026-01-25',
-    subtotal: 100000,
-    taxAmount: 18000,
-    total: 118000,
-    amountPaid: 118000,
+    id: 'inv-104',
+    invoiceNumber: 'INV-2026-0014',
+    customerName: 'Kochi Logistics Hub',
+    issueDate: '2026-09-10',
+    dueDate: '2026-09-24',
+    subtotal: 20000,
+    taxAmount: 3600,
+    total: 23600,
+    amountPaid: 23600,
     balanceDue: 0,
     status: 'Paid',
   },
@@ -84,7 +84,7 @@ export default function InvoicesPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.invoiceNumber}
         </span>
       ),
@@ -92,7 +92,7 @@ export default function InvoicesPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Issue Date',
@@ -108,7 +108,7 @@ export default function InvoicesPage() {
     },
     {
       header: 'Total',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-bold" />,
     },
     {
       header: 'Balance Due',
@@ -116,7 +116,7 @@ export default function InvoicesPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
         />
       ),
     },
@@ -131,19 +131,19 @@ export default function InvoicesPage() {
       role="admin"
       currentPath="/admin/invoices"
       user={{ name: 'System Admin', email: 'admin@brightloop.in', role: 'admin' }}
-      title="Invoices"
+      title="Invoices & Billing"
     >
       <div className="space-y-6">
         <PageHeader
-          title="Invoices & Recurring Billing"
-          description="Manage generated customer invoices, monitor payment settlements, and review overdue derived balances."
+          title="Tax Invoices & Accounts Receivable"
+          description="Detailed breakdown of recurring and one-off tax invoices, balance settlements, and statutory 18% GST."
           action={
             <Button
-              variant="primary"
+              variant="outline"
               size="md"
-              leftIcon={<Plus className="h-4 w-4" />}
+              leftIcon={<Download className="h-4 w-4" />}
             >
-              Generate Invoice
+              Export GSTR-1 CSV
             </Button>
           }
         />

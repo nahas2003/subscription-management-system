@@ -4,96 +4,105 @@ import React, { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
-import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Plus, Search, Building2, Mail, Phone, Eye, X } from 'lucide-react';
 
-interface CustomerRecord {
+interface CustomerRow {
   id: string;
   name: string;
+  companyName: string;
   email: string;
   phone: string;
-  companyName: string;
   gstin: string;
-  activeSubscriptionsCount: number;
-  totalInvoiced: number;
-  status: 'Active' | 'Draft';
+  status: 'Active' | 'Closed';
   createdAt: string;
+  activeSubscriptionsCount: number;
 }
 
-const mockCustomers: CustomerRecord[] = [
+const mockCustomers: CustomerRow[] = [
   {
-    id: 'cust-01',
-    name: 'Siddharth Menon',
+    id: 'cust-001',
+    name: 'Sarah Mathew',
+    companyName: 'Apex Technologies Pvt Ltd',
     email: 'billing@apextech.in',
     phone: '+91 98470 12345',
-    companyName: 'Apex Technologies Pvt Ltd',
-    gstin: '32AAAAA0000A1Z5',
+    gstin: '32AABCA1234A1Z5',
+    status: 'Active',
+    createdAt: '2025-06-15',
     activeSubscriptionsCount: 2,
-    totalInvoiced: 135700,
+  },
+  {
+    id: 'cust-002',
+    name: 'Jamsheed V. P.',
+    companyName: 'Kochi Logistics Hub',
+    email: 'finance@kochilogistics.com',
+    phone: '+91 94471 67890',
+    gstin: '32BBCDE5678B2Z1',
+    status: 'Active',
+    createdAt: '2025-08-20',
+    activeSubscriptionsCount: 1,
+  },
+  {
+    id: 'cust-003',
+    name: 'Anjali Menon',
+    companyName: 'Kerala Ayurveda Solutions',
+    email: 'accounts@keralaayur.org',
+    phone: '+91 97450 99887',
+    gstin: '32CCDEF9012C3Z8',
     status: 'Active',
     createdAt: '2026-01-10',
-  },
-  {
-    id: 'cust-02',
-    name: 'Fathima Raheem',
-    email: 'ops@kochi-logistics.com',
-    phone: '+91 94471 98765',
-    companyName: 'Kochi Logistics Hub',
-    gstin: '32BBBBB1111B2Z6',
-    activeSubscriptionsCount: 1,
-    totalInvoiced: 28320,
-    status: 'Active',
-    createdAt: '2026-02-14',
-  },
-  {
-    id: 'cust-03',
-    name: 'Anand Varma',
-    email: 'finance@malabarretail.in',
-    phone: '+91 97455 54321',
-    companyName: 'Malabar Retailers Ltd',
-    gstin: '32CCCCC2222C3Z7',
     activeSubscriptionsCount: 0,
-    totalInvoiced: 35400,
+  },
+  {
+    id: 'cust-004',
+    name: 'Rohan Nambiar',
+    companyName: 'Malabar Retailers Ltd',
+    email: 'admin@malabarretail.com',
+    phone: '+91 98950 33445',
+    gstin: '32DDEFG3456D4Z4',
     status: 'Active',
-    createdAt: '2026-03-01',
+    createdAt: '2025-11-05',
+    activeSubscriptionsCount: 1,
   },
 ];
 
-export default function CustomersPage() {
+export default function AdminCustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerRow | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState<CustomerRecord | null>(null);
 
-  const filteredCustomers = mockCustomers.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCustomers = mockCustomers.filter((c) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      c.companyName.toLowerCase().includes(term) ||
+      c.name.toLowerCase().includes(term) ||
+      c.email.toLowerCase().includes(term)
+    );
+  });
 
-  const columns: Column<CustomerRecord>[] = [
+  const columns: Column<CustomerRow>[] = [
     {
       header: 'Customer / Business',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.companyName}</div>
-          <div className="text-xs text-slate-500">Contact: {item.name}</div>
+          <div className="font-bold text-[#211b15]">{item.companyName}</div>
+          <div className="text-xs text-[#96897b]">Contact: {item.name}</div>
         </div>
       ),
     },
     {
       header: 'Email & Phone',
       cell: (item) => (
-        <div className="text-xs text-slate-600 space-y-0.5">
+        <div className="text-xs text-[#50463c] space-y-0.5">
           <div className="flex items-center gap-1">
-            <Mail className="h-3 w-3 text-slate-400" />
+            <Mail className="h-3 w-3 text-[#50463c]" />
             <span>{item.email}</span>
           </div>
-          <div className="flex items-center gap-1 text-slate-400">
+          <div className="flex items-center gap-1 text-[#96897b]">
             <Phone className="h-3 w-3" />
             <span>{item.phone}</span>
           </div>
@@ -104,7 +113,7 @@ export default function CustomersPage() {
       header: 'Active Subs',
       align: 'center',
       cell: (item) => (
-        <span className="inline-flex rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-[#4F46E5]">
+        <span className="inline-flex rounded-[3.75px] bg-[#fdf6ed] border border-[#e8b672]/60 px-2 py-0.5 text-xs font-bold text-[#8c591b]">
           {item.activeSubscriptionsCount}
         </span>
       ),
@@ -112,7 +121,7 @@ export default function CustomersPage() {
     {
       header: 'GSTIN',
       cell: (item) => (
-        <span className="font-mono text-xs text-slate-600">{item.gstin}</span>
+        <span className="font-mono text-xs text-[#50463c]">{item.gstin}</span>
       ),
     },
     {
@@ -184,19 +193,19 @@ export default function CustomersPage() {
         {/* Customer Detail Modal */}
         {selectedCustomer && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans"
             role="dialog"
             aria-modal="true"
           >
-            <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl space-y-5 animate-in zoom-in-95">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="w-full max-w-lg rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-5 animate-in zoom-in-95">
+              <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-[#4F46E5]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[3.75px] bg-[#fdf6ed] text-[#8c591b]">
                     <Building2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900">{selectedCustomer.companyName}</h3>
-                    <span className="text-xs text-slate-500">ID: {selectedCustomer.id}</span>
+                    <h3 className="font-display text-2xl font-bold text-[#211b15]">{selectedCustomer.companyName}</h3>
+                    <span className="text-xs text-[#96897b]">ID: {selectedCustomer.id}</span>
                   </div>
                 </div>
                 <StatusBadge status={selectedCustomer.status} size="sm" />
@@ -204,32 +213,32 @@ export default function CustomersPage() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-xs text-slate-400 block">Primary Contact</span>
-                  <span className="font-medium text-slate-800">{selectedCustomer.name}</span>
+                  <span className="text-xs text-[#96897b] block font-bold uppercase">Primary Contact</span>
+                  <span className="font-semibold text-[#211b15]">{selectedCustomer.name}</span>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-400 block">Email Address</span>
-                  <span className="font-medium text-slate-800">{selectedCustomer.email}</span>
+                  <span className="text-xs text-[#96897b] block font-bold uppercase">Email Address</span>
+                  <span className="font-semibold text-[#211b15]">{selectedCustomer.email}</span>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-400 block">Phone</span>
-                  <span className="font-medium text-slate-800">{selectedCustomer.phone}</span>
+                  <span className="text-xs text-[#96897b] block font-bold uppercase">Phone</span>
+                  <span className="font-semibold text-[#211b15]">{selectedCustomer.phone}</span>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-400 block">Tax / GSTIN</span>
-                  <span className="font-mono text-xs font-semibold text-slate-700">{selectedCustomer.gstin}</span>
+                  <span className="text-xs text-[#96897b] block font-bold uppercase">Tax / GSTIN</span>
+                  <span className="font-mono text-xs font-bold text-[#8c591b]">{selectedCustomer.gstin}</span>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-400 block">Active Subscriptions</span>
-                  <span className="font-bold text-[#4F46E5]">{selectedCustomer.activeSubscriptionsCount} Active</span>
+                  <span className="text-xs text-[#96897b] block font-bold uppercase">Active Subscriptions</span>
+                  <span className="font-bold text-[#8c591b]">{selectedCustomer.activeSubscriptionsCount} Active</span>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-400 block">Member Since</span>
+                  <span className="text-xs text-[#96897b] block font-bold uppercase">Member Since</span>
                   <DateDisplay date={selectedCustomer.createdAt} format="long" />
                 </div>
               </div>
 
-              <div className="flex justify-end pt-2 border-t border-slate-100">
+              <div className="flex justify-end pt-2 border-t border-[#efe9e0]">
                 <Button variant="outline" size="md" onClick={() => setSelectedCustomer(null)}>
                   Close
                 </Button>
@@ -241,16 +250,16 @@ export default function CustomersPage() {
         {/* Add Customer Modal */}
         {isCreateModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans"
             role="dialog"
             aria-modal="true"
           >
-            <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900">Add Customer Account</h3>
+            <div className="w-full max-w-lg rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+              <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
+                <h3 className="font-display text-2xl font-bold text-[#211b15]">ADD CUSTOMER ACCOUNT</h3>
                 <button
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-[#50463c] hover:text-[#211b15]"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -276,7 +285,7 @@ export default function CustomersPage() {
                 </FormField>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[#efe9e0]">
                 <Button variant="outline" size="md" onClick={() => setIsCreateModalOpen(false)}>
                   Cancel
                 </Button>

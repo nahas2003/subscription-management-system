@@ -18,40 +18,44 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 }) => {
   const normalized = (status || '').toLowerCase().trim();
 
-  // Status mapping matching strict design tokens and lifecycle requirements
-  let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
-  let dotStyle = 'bg-slate-400';
+  let badgeStyle = 'bg-[#efe9e0] text-[#50463c] border-[#c7bcaf]';
+  let dotStyle = 'bg-[#96897b]';
 
-  if (normalized === 'active' || normalized === 'paid' || normalized === 'confirmed') {
-    // Semantic Success: #15803D
-    badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-    dotStyle = 'bg-emerald-600';
+  if (normalized === 'active' || normalized === 'paid') {
+    // Settled & Active: Sage green accent
+    badgeStyle = 'bg-[#eef5ee] text-[#2b4c2b] border-[#c5d8c4]';
+    dotStyle = 'bg-[#7a9779]';
+  } else if (normalized === 'confirmed') {
+    // Confirmed: Deep olive tone
+    badgeStyle = 'bg-[#efe9e0] text-[#211b15] border-[#c7bcaf] font-semibold';
+    dotStyle = 'bg-[#434f40]';
   } else if (normalized === 'overdue') {
-    // Semantic Danger: #DC2626
-    badgeStyle = 'bg-red-50 text-red-800 border-red-200 font-semibold';
-    dotStyle = 'bg-red-600';
+    // Overdue: Terracotta rust
+    badgeStyle = 'bg-[#fcedeb] text-[#8f2115] border-[#e8b0a9] font-bold';
+    dotStyle = 'bg-[#b83a2b]';
   } else if (normalized === 'quotation' || normalized === 'pending') {
-    // Semantic Warning: #D97706
-    badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200';
-    dotStyle = 'bg-amber-600';
+    // Pending / Quotation: Honey amber accent
+    badgeStyle = 'bg-[#fdf6ed] text-[#7d4e13] border-[#e8b672]/60 font-semibold';
+    dotStyle = 'bg-[#e8b672]';
   } else if (normalized === 'draft') {
-    // Semantic Info: #0284C7
-    badgeStyle = 'bg-sky-50 text-sky-800 border-sky-200';
-    dotStyle = 'bg-sky-600';
+    // Draft: Neutral bone surface
+    badgeStyle = 'bg-[#efe9e0]/80 text-[#50463c] border-[#c7bcaf]';
+    dotStyle = 'bg-[#96897b]';
   } else if (normalized === 'closed') {
-    badgeStyle = 'bg-slate-100 text-slate-600 border-slate-300';
-    dotStyle = 'bg-slate-400';
+    // Closed: Saddle / Bone
+    badgeStyle = 'bg-[#efe9e0] text-[#50463c] border-[#c7bcaf]';
+    dotStyle = 'bg-[#96897b]';
   }
 
   const sizes = {
-    sm: 'text-xs px-2 py-0.5 gap-1.5',
+    sm: 'text-[11px] px-2 py-0.5 gap-1.5',
     md: 'text-xs px-2.5 py-1 gap-2',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-center font-medium rounded-full border tracking-wide uppercase',
+        'inline-flex items-center font-sans font-medium rounded-[3.75px] border tracking-wider uppercase select-none',
         badgeStyle,
         sizes[size],
         className

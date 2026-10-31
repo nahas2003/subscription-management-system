@@ -12,13 +12,10 @@ import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   FileText,
-  Repeat,
-  Receipt,
-  Users,
   CreditCard,
-  CheckCircle,
-  Clock,
-  ArrowRight,
+  AlertCircle,
+  Users,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface StaffTaskQuotation {
@@ -27,7 +24,7 @@ interface StaffTaskQuotation {
   customerName: string;
   amount: number;
   validUntil: string;
-  status: 'Draft' | 'Quotation' | 'Confirmed';
+  status: SubscriptionStatus;
 }
 
 interface StaffTaskInvoice {
@@ -41,26 +38,26 @@ interface StaffTaskInvoice {
 
 const mockStaffQuotations: StaffTaskQuotation[] = [
   {
-    id: 'q-01',
-    quotationNumber: 'QUO-2026-0031',
-    customerName: 'Cochin Tech Solutions',
-    amount: 45000,
-    validUntil: '2026-11-05',
-    status: 'Quotation',
+    id: 'sq-01',
+    quotationNumber: 'QTN-2026-0084',
+    customerName: 'Kochi Logistics Hub',
+    amount: 23600,
+    validUntil: '2026-11-01',
+    status: 'Confirmed',
   },
   {
-    id: 'q-02',
-    quotationNumber: 'QUO-2026-0034',
-    customerName: 'Kerala Spice Exporters',
-    amount: 118000,
-    validUntil: '2026-11-12',
+    id: 'sq-02',
+    quotationNumber: 'QTN-2026-0087',
+    customerName: 'Kerala Ayurveda Solutions',
+    amount: 9440,
+    validUntil: '2026-11-18',
     status: 'Draft',
   },
 ];
 
 const mockStaffInvoices: StaffTaskInvoice[] = [
   {
-    id: 'inv-01',
+    id: 'si-01',
     invoiceNumber: 'INV-2026-0042',
     customerName: 'Apex Technologies Pvt Ltd',
     dueDate: '2026-11-05',
@@ -68,7 +65,7 @@ const mockStaffInvoices: StaffTaskInvoice[] = [
     status: 'Confirmed',
   },
   {
-    id: 'inv-02',
+    id: 'si-02',
     invoiceNumber: 'INV-2026-0038',
     customerName: 'Malabar Retailers Ltd',
     dueDate: '2026-10-20',
@@ -86,7 +83,7 @@ export default function StaffDashboardPage() {
     {
       header: 'Quotation #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.quotationNumber}
         </span>
       ),
@@ -94,7 +91,7 @@ export default function StaffDashboardPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-medium text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Value',
@@ -114,7 +111,7 @@ export default function StaffDashboardPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-slate-800">
+        <span className="font-mono text-xs font-bold text-[#211b15]">
           {item.invoiceNumber}
         </span>
       ),
@@ -122,7 +119,7 @@ export default function StaffDashboardPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-medium text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Due Date',
@@ -134,7 +131,7 @@ export default function StaffDashboardPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
         />
       ),
     },
@@ -147,15 +144,14 @@ export default function StaffDashboardPage() {
       align: 'right',
       cell: (item) => (
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
           onClick={() => {
             setSelectedInvoice(item);
             setRecordPaymentModal(true);
           }}
-          leftIcon={<CreditCard className="h-3.5 w-3.5" />}
         >
-          Record Payment
+          Record Pay
         </Button>
       ),
     },
@@ -164,61 +160,62 @@ export default function StaffDashboardPage() {
   const handleConfirmPayment = () => {
     setRecordPaymentModal(false);
     setPaymentSuccess(true);
+    setTimeout(() => setPaymentSuccess(false), 4000);
   };
 
   return (
     <AppShell
       role="staff"
       currentPath="/staff/dashboard"
-      user={{ name: 'Operations Staff', email: 'staff@brightloop.in', role: 'staff' }}
-      title="Staff Operations"
+      user={{ name: 'Deepa Krishnan', email: 'deepa@brightloop.in', role: 'staff' }}
+      title="Staff Console"
     >
       <div className="space-y-6">
         <PageHeader
-          title="Staff Operations Dashboard"
-          description="Daily operational workflow: customer quotations, subscription activation, and manual payment verification."
+          title="Operations Desk"
+          description="Daily operational queue for customer onboarding, order confirmation, and payment reconciliation."
         />
 
         {paymentSuccess && (
-          <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+          <div className="flex items-center justify-between rounded-[7.5px] border border-[#c5d8c4] bg-[#eef5ee] p-4 text-[#2b4c2b] shadow-xs font-sans">
             <div className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-emerald-600" />
-              <div className="text-sm">
-                <strong>Payment Successfully Recorded:</strong> Manual allocation settled against {selectedInvoice?.invoiceNumber}.
-              </div>
+              <CheckCircle2 className="h-5 w-5 text-[#7a9779]" />
+              <span className="text-sm">
+                <strong>Payment Reconciled:</strong> Manual settlement logged for {selectedInvoice?.invoiceNumber}.
+              </span>
             </div>
             <button
               onClick={() => setPaymentSuccess(false)}
-              className="text-xs font-semibold text-emerald-700 hover:underline"
+              className="text-xs font-bold text-[#2b4c2b] hover:underline"
             >
               Dismiss
             </button>
           </div>
         )}
 
-        {/* Operational KPI Cards */}
+        {/* Operational KPI Counters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Pending Quotations"
             value="2"
-            subtitle="Awaiting customer confirmation"
+            subtitle="Draft & Confirmed"
             icon={FileText}
           />
           <StatCard
-            title="Invoices Awaiting Payment"
-            value="2"
-            subtitle="Total balance: ₹53,100"
-            icon={Receipt}
-          />
-          <StatCard
-            title="Overdue Accounts"
+            title="Overdue Invoices"
             value="1"
-            subtitle="Follow-up needed"
-            icon={Clock}
+            subtitle="₹35,400 attention required"
+            icon={AlertCircle}
           />
           <StatCard
-            title="Customers Managed"
-            value="14"
+            title="Pending Collections"
+            value={<MoneyDisplay amount={53100} size="xl" />}
+            subtitle="Open invoices balance"
+            icon={CreditCard}
+          />
+          <StatCard
+            title="Assigned Accounts"
+            value="4"
             subtitle="Active accounts"
             icon={Users}
           />
@@ -228,8 +225,8 @@ export default function StaffDashboardPage() {
         <div className="space-y-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">Quotations In Progress</h2>
-              <span className="text-xs text-slate-400">2 pending</span>
+              <h2 className="font-display text-2xl font-bold text-[#211b15]">QUOTATIONS IN PROGRESS</h2>
+              <span className="text-xs text-[#96897b]">2 pending</span>
             </div>
             <DataTable
               columns={quoColumns}
@@ -240,8 +237,8 @@ export default function StaffDashboardPage() {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">Outstanding Invoices for Payment</h2>
-              <span className="text-xs text-slate-400">Action: Record verified payments</span>
+              <h2 className="font-display text-2xl font-bold text-[#211b15]">OUTSTANDING INVOICES</h2>
+              <span className="text-xs text-[#96897b]">Record verified payments</span>
             </div>
             <DataTable
               columns={invColumns}

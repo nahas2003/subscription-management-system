@@ -4,11 +4,11 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, Percent, Tag } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Plus } from 'lucide-react';
 
 interface DiscountRecord {
   id: string;
@@ -17,44 +17,44 @@ interface DiscountRecord {
   type: 'Percentage' | 'Fixed';
   value: number;
   minPurchase: number;
+  status: 'Active' | 'Closed';
   validFrom: string;
   validUntil: string;
-  status: 'Active' | 'Closed';
 }
 
 const mockDiscounts: DiscountRecord[] = [
   {
     id: 'disc-01',
-    name: 'Diwali Enterprise Promotion',
-    code: 'FESTIVE15',
+    name: 'Early Adopter QMS Discount',
+    code: 'EARLYBIRD10',
     type: 'Percentage',
-    value: 15, // 15%
+    value: 10,
     minPurchase: 50000,
-    validFrom: '2026-10-15',
-    validUntil: '2026-11-15',
     status: 'Active',
+    validFrom: '2026-01-01',
+    validUntil: '2026-12-31',
   },
   {
     id: 'disc-02',
-    name: 'New Startup Credit',
-    code: 'STARTUP5K',
-    type: 'Fixed',
-    value: 5000, // ₹5,000 off
-    minPurchase: 20000,
-    validFrom: '2026-01-01',
-    validUntil: '2026-12-31',
+    name: 'Make-A-Ton Hackathon Promo',
+    code: 'MAKEATON9',
+    type: 'Percentage',
+    value: 15,
+    minPurchase: 10000,
     status: 'Active',
+    validFrom: '2026-10-01',
+    validUntil: '2026-11-15',
   },
   {
     id: 'disc-03',
-    name: 'Early Adopter Q1 Pass',
-    code: 'EARLY2026',
-    type: 'Percentage',
-    value: 20,
-    minPurchase: 10000,
-    validFrom: '2026-01-01',
-    validUntil: '2026-03-31',
-    status: 'Closed',
+    name: 'Annual Pre-payment Waiver',
+    code: 'ANNUALFLAT',
+    type: 'Fixed',
+    value: 5000,
+    minPurchase: 80000,
+    status: 'Active',
+    validFrom: '2026-06-01',
+    validUntil: '2027-05-31',
   },
 ];
 
@@ -64,8 +64,8 @@ export default function DiscountsPage() {
       header: 'Promo Name & Code',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.name}</div>
-          <span className="font-mono text-xs font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+          <div className="font-bold text-[#211b15]">{item.name}</div>
+          <span className="font-mono text-xs font-bold text-[#8c591b] bg-[#fdf6ed] px-1.5 py-0.5 rounded-[3.75px] border border-[#e8b672]/60">
             {item.code}
           </span>
         </div>
@@ -74,7 +74,7 @@ export default function DiscountsPage() {
     {
       header: 'Discount Value',
       cell: (item) => (
-        <span className="font-bold text-emerald-700 text-sm">
+        <span className="font-bold text-[#2b4c2b] text-sm">
           {item.type === 'Percentage' ? `${item.value}% OFF` : <MoneyDisplay amount={item.value} size="sm" />}
         </span>
       ),
@@ -114,7 +114,7 @@ export default function DiscountsPage() {
               size="md"
               leftIcon={<Plus className="h-4 w-4" />}
             >
-              Create Discount
+              Add Discount Rule
             </Button>
           }
         />

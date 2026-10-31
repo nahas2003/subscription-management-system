@@ -4,46 +4,67 @@ import React, { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { DateDisplay } from '@/components/ui/DateDisplay';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, Search, Building2, Mail, Phone, Eye } from 'lucide-react';
+import { DateDisplay } from '@/components/ui/DateDisplay';
+import { Input } from '@/components/ui/Input';
+import { Search } from 'lucide-react';
 
 interface CustomerRecord {
   id: string;
   name: string;
+  companyName: string;
   email: string;
   phone: string;
-  companyName: string;
   gstin: string;
-  activeSubscriptionsCount: number;
-  status: 'Active' | 'Draft';
+  status: 'Active' | 'Closed';
   createdAt: string;
+  activeSubscriptionsCount: number;
 }
 
 const mockCustomers: CustomerRecord[] = [
   {
-    id: 'cust-01',
-    name: 'Siddharth Menon',
+    id: 'cust-001',
+    name: 'Sarah Mathew',
+    companyName: 'Apex Technologies Pvt Ltd',
     email: 'billing@apextech.in',
     phone: '+91 98470 12345',
-    companyName: 'Apex Technologies Pvt Ltd',
-    gstin: '32AAAAA0000A1Z5',
-    activeSubscriptionsCount: 2,
+    gstin: '32AABCA1234A1Z5',
     status: 'Active',
-    createdAt: '2026-01-10',
+    createdAt: '2025-06-15',
+    activeSubscriptionsCount: 2,
   },
   {
-    id: 'cust-02',
-    name: 'Fathima Raheem',
-    email: 'ops@kochi-logistics.com',
-    phone: '+91 94471 98765',
+    id: 'cust-002',
+    name: 'Jamsheed V. P.',
     companyName: 'Kochi Logistics Hub',
-    gstin: '32BBBBB1111B2Z6',
-    activeSubscriptionsCount: 1,
+    email: 'finance@kochilogistics.com',
+    phone: '+91 94471 67890',
+    gstin: '32BBCDE5678B2Z1',
     status: 'Active',
-    createdAt: '2026-02-14',
+    createdAt: '2025-08-20',
+    activeSubscriptionsCount: 1,
+  },
+  {
+    id: 'cust-003',
+    name: 'Anjali Menon',
+    companyName: 'Kerala Ayurveda Solutions',
+    email: 'accounts@keralaayur.org',
+    phone: '+91 97450 99887',
+    gstin: '32CCDEF9012C3Z8',
+    status: 'Active',
+    createdAt: '2026-01-10',
+    activeSubscriptionsCount: 0,
+  },
+  {
+    id: 'cust-004',
+    name: 'Rohan Nambiar',
+    companyName: 'Malabar Retailers Ltd',
+    email: 'admin@malabarretail.com',
+    phone: '+91 98950 33445',
+    gstin: '32DDEFG3456D4Z4',
+    status: 'Active',
+    createdAt: '2025-11-05',
+    activeSubscriptionsCount: 1,
   },
 ];
 
@@ -62,17 +83,17 @@ export default function StaffCustomersPage() {
       header: 'Business Name',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.companyName}</div>
-          <div className="text-xs text-slate-500">Contact: {item.name}</div>
+          <div className="font-bold text-[#211b15]">{item.companyName}</div>
+          <div className="text-xs text-[#96897b]">Contact: {item.name}</div>
         </div>
       ),
     },
     {
       header: 'Email & Phone',
       cell: (item) => (
-        <div className="text-xs text-slate-600">
+        <div className="text-xs text-[#50463c]">
           <div>{item.email}</div>
-          <div className="text-slate-400">{item.phone}</div>
+          <div className="text-[#96897b]">{item.phone}</div>
         </div>
       ),
     },
@@ -80,7 +101,7 @@ export default function StaffCustomersPage() {
       header: 'Active Subs',
       align: 'center',
       cell: (item) => (
-        <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+        <span className="inline-flex rounded-[3.75px] bg-[#fdf6ed] border border-[#e8b672]/60 px-2 py-0.5 text-xs font-bold text-[#8c591b]">
           {item.activeSubscriptionsCount}
         </span>
       ),
@@ -88,7 +109,7 @@ export default function StaffCustomersPage() {
     {
       header: 'GSTIN',
       accessorKey: 'gstin',
-      className: 'font-mono text-xs text-slate-600',
+      className: 'font-mono text-xs text-[#50463c]',
     },
     {
       header: 'Created On',
@@ -110,7 +131,7 @@ export default function StaffCustomersPage() {
       <div className="space-y-6">
         <PageHeader
           title="Customer Directory"
-          description="Operational customer registry. Create new customer accounts and view contact details."
+          description="Operational directory for customer contact information and active subscriptions."
         />
 
         <div className="max-w-md w-full">
@@ -126,6 +147,7 @@ export default function StaffCustomersPage() {
           columns={columns}
           data={filtered}
           keyExtractor={(item) => item.id}
+          emptyMessage="No customer records found."
         />
       </div>
     </AppShell>

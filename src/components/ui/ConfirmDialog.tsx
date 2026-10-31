@@ -29,16 +29,16 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans animate-in fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="dialog-title"
     >
-      <div className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl animate-in zoom-in-95">
+      <div className="relative w-full max-w-md rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl animate-in zoom-in-95">
         <button
           onClick={onClose}
           disabled={isLoading}
-          className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 disabled:opacity-50"
+          className="absolute right-4 top-4 text-[#50463c] hover:text-[#211b15] disabled:opacity-50"
           aria-label="Close dialog"
         >
           <X className="h-5 w-5" />
@@ -46,20 +46,20 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
         <div className="flex items-start gap-4">
           <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[3.75px] ${
               variant === 'danger'
-                ? 'bg-red-100 text-red-600'
-                : 'bg-indigo-100 text-[#4F46E5]'
+                ? 'bg-[#fcedeb] text-[#b83a2b]'
+                : 'bg-[#fdf6ed] text-[#e8b672]'
             }`}
           >
             <AlertCircle className="h-5 w-5" />
           </div>
 
           <div className="min-w-0 flex-1">
-            <h3 id="dialog-title" className="text-base font-semibold text-slate-900">
+            <h3 id="dialog-title" className="text-base font-bold text-[#211b15]">
               {title}
             </h3>
-            <p className="mt-1 text-sm text-slate-500">{description}</p>
+            <p className="mt-1 text-sm text-[#50463c] leading-relaxed">{description}</p>
 
             <div className="mt-6 flex items-center justify-end gap-3">
               <Button

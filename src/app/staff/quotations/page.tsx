@@ -4,10 +4,10 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge, SubscriptionStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
+import { Button } from '@/components/ui/Button';
 import { Plus } from 'lucide-react';
 
 interface StaffQuotation {
@@ -17,26 +17,26 @@ interface StaffQuotation {
   createdAt: string;
   validUntil: string;
   total: number;
-  status: 'Draft' | 'Quotation' | 'Confirmed';
+  status: SubscriptionStatus;
 }
 
 const mockQuotations: StaffQuotation[] = [
   {
-    id: 'q-01',
-    quotationNumber: 'QUO-2026-0031',
-    customerName: 'Cochin Tech Solutions',
-    createdAt: '2026-10-20',
-    validUntil: '2026-11-05',
-    total: 118000,
-    status: 'Quotation',
+    id: 'sq-01',
+    quotationNumber: 'QTN-2026-0084',
+    customerName: 'Kochi Logistics Hub',
+    createdAt: '2026-10-01',
+    validUntil: '2026-11-01',
+    total: 23600,
+    status: 'Confirmed',
   },
   {
-    id: 'q-02',
-    quotationNumber: 'QUO-2026-0034',
-    customerName: 'Kerala Spice Exporters',
-    createdAt: '2026-10-28',
-    validUntil: '2026-11-12',
-    total: 45000,
+    id: 'sq-02',
+    quotationNumber: 'QTN-2026-0087',
+    customerName: 'Kerala Ayurveda Solutions',
+    createdAt: '2026-10-18',
+    validUntil: '2026-11-18',
+    total: 9440,
     status: 'Draft',
   },
 ];
@@ -46,7 +46,7 @@ export default function StaffQuotationsPage() {
     {
       header: 'Quotation #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.quotationNumber}
         </span>
       ),
@@ -54,7 +54,7 @@ export default function StaffQuotationsPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Created On',
@@ -66,7 +66,7 @@ export default function StaffQuotationsPage() {
     },
     {
       header: 'Total Value',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-bold" />,
     },
     {
       header: 'Status',

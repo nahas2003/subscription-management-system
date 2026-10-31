@@ -28,19 +28,24 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
+      'inline-flex items-center justify-center font-medium font-sans rounded-[3.75px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#e8b672] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
 
     const variants = {
+      // Primary CTA: Honey Amber fill, Ink dark text with warm press
       primary:
-        'bg-[#4F46E5] text-white hover:bg-[#4338CA] focus-visible:ring-[#4F46E5] active:bg-[#3730A3]',
+        'bg-[#e8b672] text-[#211b15] font-semibold hover:bg-[#dba35c] shadow-sm hover:shadow-ambrook-btn active:bg-[#c9944d] border border-[#d6a562]',
+      // Secondary: Bone soft surface with Loam border
       secondary:
-        'bg-slate-100 text-slate-800 hover:bg-slate-200 focus-visible:ring-slate-400 active:bg-slate-300',
+        'bg-[#efe9e0] border border-[#c7bcaf] text-[#211b15] hover:bg-[#e4dcce] hover:border-[#b4a696]',
+      // Outline: Pure white with Loam border
       outline:
-        'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:ring-[#4F46E5] active:bg-slate-100',
+        'border border-[#c7bcaf] bg-white text-[#211b15] hover:bg-[#efe9e0] hover:border-[#211b15]',
+      // Ghost: Saddle text with Bone hover
       ghost:
-        'text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-400 active:bg-slate-200',
+        'text-[#50463c] hover:text-[#211b15] hover:bg-[#efe9e0]',
+      // Danger: Deep terracotta
       danger:
-        'bg-[#DC2626] text-white hover:bg-red-700 focus-visible:ring-red-500 active:bg-red-800',
+        'bg-[#b83a2b] text-white hover:bg-[#9e2e21] active:bg-[#85251a]',
     };
 
     const sizes = {

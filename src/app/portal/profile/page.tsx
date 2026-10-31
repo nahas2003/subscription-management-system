@@ -21,21 +21,21 @@ export default function CustomerProfilePage() {
           title="Account Profile"
           description="Manage your verified billing details, tax registration number, and primary contacts."
           action={
-            <div className="flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 border border-emerald-200">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            <div className="flex items-center gap-1.5 rounded-[3.75px] bg-white border border-[#efe9e0] px-3 py-1.5 text-xs font-bold text-[#2b4c2b] shadow-xs">
+              <ShieldCheck className="h-4 w-4 text-[#7a9779]" />
               <span>Verified Customer Profile</span>
             </div>
           }
         />
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-[#4F46E5]">
+        <div className="rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-ambrook-card space-y-6 font-sans">
+          <div className="flex items-center gap-3 pb-4 border-b border-[#efe9e0]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-[3.75px] bg-[#fdf6ed] text-[#8c591b]">
               <Building2 className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Apex Technologies Pvt Ltd</h2>
-              <span className="text-xs text-slate-500">Customer ID: CUST-2026-0012</span>
+              <h2 className="font-display text-2xl font-bold text-[#211b15]">Apex Technologies Pvt Ltd</h2>
+              <span className="text-xs text-[#96897b]">Customer ID: CUST-2026-0012</span>
             </div>
           </div>
 
@@ -63,7 +63,7 @@ export default function CustomerProfilePage() {
             </FormField>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-slate-100">
+          <div className="flex justify-end pt-4 border-t border-[#efe9e0]">
             <Button variant="primary" size="md">
               Update Contact Details
             </Button>

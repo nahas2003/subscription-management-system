@@ -4,46 +4,50 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatCard } from '@/components/ui/StatCard';
-import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { IndianRupee, Repeat, Receipt, AlertTriangle, BarChart3, TrendingUp } from 'lucide-react';
+import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
+import { IndianRupee, Receipt, Repeat, TrendingUp } from 'lucide-react';
 
 interface RevenueBreakdownRow {
   period: string;
   invoicedTotal: number;
   revenueReceived: number;
   outstandingBalance: number;
+  activeSubscriptionsCount: number;
   collectionRate: string;
 }
 
 const mockReportData: RevenueBreakdownRow[] = [
   {
     period: 'October 2026',
-    invoicedTotal: 70800,
-    revenueReceived: 17700,
+    invoicedTotal: 53100,
+    revenueReceived: 0,
     outstandingBalance: 53100,
-    collectionRate: '25.0%',
+    activeSubscriptionsCount: 3,
+    collectionRate: '0.0%',
   },
   {
     period: 'September 2026',
-    invoicedTotal: 17700,
-    revenueReceived: 17700,
+    invoicedTotal: 41300,
+    revenueReceived: 41300,
     outstandingBalance: 0,
+    activeSubscriptionsCount: 3,
     collectionRate: '100.0%',
   },
   {
     period: 'August 2026',
-    invoicedTotal: 24000,
-    revenueReceived: 24000,
-    outstandingBalance: 0,
-    collectionRate: '100.0%',
-  },
-  {
-    period: 'January 2026',
     invoicedTotal: 118000,
     revenueReceived: 118000,
     outstandingBalance: 0,
+    activeSubscriptionsCount: 2,
+    collectionRate: '100.0%',
+  },
+  {
+    period: 'July 2026',
+    invoicedTotal: 18000,
+    revenueReceived: 18000,
+    outstandingBalance: 0,
+    activeSubscriptionsCount: 2,
     collectionRate: '100.0%',
   },
 ];
@@ -53,7 +57,7 @@ export default function ReportsPage() {
     {
       header: 'Accounting Period',
       accessorKey: 'period',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Total Invoiced',
@@ -61,7 +65,7 @@ export default function ReportsPage() {
     },
     {
       header: 'Revenue Collected',
-      cell: (item) => <MoneyDisplay amount={item.revenueReceived} size="sm" className="font-bold text-emerald-700" />,
+      cell: (item) => <MoneyDisplay amount={item.revenueReceived} size="sm" className="font-bold text-[#2b4c2b]" />,
     },
     {
       header: 'Outstanding Balance',
@@ -69,14 +73,14 @@ export default function ReportsPage() {
         <MoneyDisplay
           amount={item.outstandingBalance}
           size="sm"
-          className={item.outstandingBalance > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.outstandingBalance > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
         />
       ),
     },
     {
       header: 'Collection Rate',
       cell: (item) => (
-        <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700">
+        <span className="inline-flex rounded-[3.75px] bg-[#efe9e0] border border-[#c7bcaf] px-2.5 py-0.5 text-xs font-bold text-[#211b15]">
           {item.collectionRate}
         </span>
       ),
@@ -117,7 +121,7 @@ export default function ReportsPage() {
             icon={Repeat}
           />
           <StatCard
-            title="Avg Collection Efficiency"
+            title="Collection Efficiency"
             value="89.2%"
             subtitle="+4.5% vs previous quarter"
             icon={TrendingUp}
@@ -127,8 +131,8 @@ export default function ReportsPage() {
         {/* Monthly Breakdown Table */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-slate-900">Fiscal Period Reconciliation</h2>
-            <span className="text-xs text-slate-400">All amounts in INR (₹)</span>
+            <h2 className="font-display text-2xl font-bold text-[#211b15]">FISCAL RECONCILIATION</h2>
+            <span className="text-xs text-[#96897b]">Amounts in INR (₹)</span>
           </div>
           <DataTable
             columns={columns}

@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
-import { FormField } from '@/components/ui/FormField';
-import { Input } from '@/components/ui/Input';
-import { DateDisplay } from '@/components/ui/DateDisplay';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, ShieldCheck, UserCheck, X } from 'lucide-react';
+import { DateDisplay } from '@/components/ui/DateDisplay';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { FormField } from '@/components/ui/FormField';
+import { Plus, X } from 'lucide-react';
 
 interface StaffUser {
   id: string;
@@ -23,35 +23,35 @@ interface StaffUser {
 
 const mockStaff: StaffUser[] = [
   {
-    id: 'usr-01',
-    name: 'Gokul Krishnan',
+    id: 'usr-001',
+    name: 'Anand Kumar',
     email: 'admin@brightloop.in',
     role: 'admin',
     status: 'Active',
-    createdAt: '2026-01-01',
+    createdAt: '2025-01-10',
     lastLogin: '2026-10-31',
   },
   {
-    id: 'usr-02',
-    name: 'Nahas K',
-    email: 'staff.operations@brightloop.in',
+    id: 'usr-002',
+    name: 'Deepa Krishnan',
+    email: 'deepa@brightloop.in',
     role: 'staff',
     status: 'Active',
-    createdAt: '2026-01-15',
+    createdAt: '2025-04-12',
     lastLogin: '2026-10-30',
   },
   {
-    id: 'usr-03',
-    name: 'Ananya Nair',
-    email: 'finance.lead@brightloop.in',
+    id: 'usr-003',
+    name: 'Manoj Pillai',
+    email: 'manoj@brightloop.in',
     role: 'staff',
     status: 'Active',
-    createdAt: '2026-02-01',
+    createdAt: '2025-07-01',
     lastLogin: '2026-10-28',
   },
 ];
 
-export default function StaffManagementPage() {
+export default function StaffPage() {
   const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
 
   const columns: Column<StaffUser>[] = [
@@ -59,8 +59,8 @@ export default function StaffManagementPage() {
       header: 'Staff Member',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.name}</div>
-          <div className="text-xs text-slate-500">{item.email}</div>
+          <div className="font-bold text-[#211b15]">{item.name}</div>
+          <div className="text-xs text-[#96897b]">{item.email}</div>
         </div>
       ),
     },
@@ -68,10 +68,10 @@ export default function StaffManagementPage() {
       header: 'Role Assignment',
       cell: (item) => (
         <span
-          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ${
+          className={`inline-flex rounded-[3.75px] px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
             item.role === 'admin'
-              ? 'bg-purple-100 text-purple-700 border border-purple-200'
-              : 'bg-blue-100 text-blue-700 border border-blue-200'
+              ? 'bg-[#252a23] text-[#efe9e0] border border-[#434f40]'
+              : 'bg-[#fdf6ed] text-[#7d4e13] border border-[#e8b672]/60'
           }`}
         >
           {item.role}
@@ -124,16 +124,16 @@ export default function StaffManagementPage() {
         {/* Add Staff Dialog */}
         {isAddStaffOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans"
             role="dialog"
             aria-modal="true"
           >
-            <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900">Add Staff Account</h3>
+            <div className="w-full max-w-md rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+              <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
+                <h3 className="font-display text-2xl font-bold text-[#211b15]">ADD STAFF ACCOUNT</h3>
                 <button
                   onClick={() => setIsAddStaffOpen(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-[#50463c] hover:text-[#211b15]"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -151,7 +151,7 @@ export default function StaffManagementPage() {
                 </FormField>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[#efe9e0]">
                 <Button variant="outline" size="md" onClick={() => setIsAddStaffOpen(false)}>
                   Cancel
                 </Button>

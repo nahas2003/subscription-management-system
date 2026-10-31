@@ -4,55 +4,59 @@ import React, { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { FormField } from '@/components/ui/FormField';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Plus, CreditCard, X, CheckCircle2 } from 'lucide-react';
+import { FormField } from '@/components/ui/FormField';
+import { Plus, CheckCircle2, X } from 'lucide-react';
 
 interface PaymentRecord {
   id: string;
   paymentRef: string;
   invoiceNumber: string;
   customerName: string;
-  amount: number;
   paymentDate: string;
+  amount: number;
   paymentMethod: string;
-  status: 'Confirmed' | 'Paid';
+  status: 'Paid' | 'Confirmed' | 'Draft';
+  bankReference?: string;
 }
 
 const mockPayments: PaymentRecord[] = [
   {
     id: 'pay-01',
-    paymentRef: 'PAY-2026-0019-01',
+    paymentRef: 'PAY-2026-0031',
     invoiceNumber: 'INV-2026-0019',
     customerName: 'Apex Technologies Pvt Ltd',
+    paymentDate: '2026-10-04',
     amount: 17700,
-    paymentDate: '2026-10-02',
     paymentMethod: 'Bank Transfer (NEFT)',
-    status: 'Confirmed',
+    status: 'Paid',
+    bankReference: 'HDFC202610049921',
   },
   {
     id: 'pay-02',
-    paymentRef: 'PAY-2026-0005-01',
-    invoiceNumber: 'INV-2026-0005',
-    customerName: 'Apex Technologies Pvt Ltd',
-    amount: 118000,
-    paymentDate: '2026-01-20',
-    paymentMethod: 'Corporate Wire (RTGS)',
-    status: 'Confirmed',
+    paymentRef: 'PAY-2026-0028',
+    invoiceNumber: 'INV-2026-0014',
+    customerName: 'Kochi Logistics Hub',
+    paymentDate: '2026-09-22',
+    amount: 23600,
+    paymentMethod: 'Corporate Cheque #49281',
+    status: 'Paid',
+    bankReference: 'SBI-CHQ-49281',
   },
   {
     id: 'pay-03',
-    paymentRef: 'PAY-2026-0022-01',
-    invoiceNumber: 'INV-2026-0022',
-    customerName: 'Kochi Logistics Hub',
-    amount: 28320,
-    paymentDate: '2026-10-12',
-    paymentMethod: 'UPI Merchant Intent',
-    status: 'Confirmed',
+    paymentRef: 'PAY-2026-0021',
+    invoiceNumber: 'INV-2026-0008',
+    customerName: 'Apex Technologies Pvt Ltd',
+    paymentDate: '2026-08-30',
+    amount: 118000,
+    paymentMethod: 'RTGS Electronic Transfer',
+    status: 'Paid',
+    bankReference: 'AXIS202608301129',
   },
 ];
 
@@ -64,7 +68,7 @@ export default function PaymentsPage() {
     {
       header: 'Payment Reference',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-slate-800">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.paymentRef}
         </span>
       ),
@@ -72,7 +76,7 @@ export default function PaymentsPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs text-indigo-600 font-medium">
+        <span className="font-mono text-xs text-[#211b15] font-medium">
           {item.invoiceNumber}
         </span>
       ),
@@ -80,7 +84,7 @@ export default function PaymentsPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Payment Date',
@@ -89,14 +93,14 @@ export default function PaymentsPage() {
     {
       header: 'Payment Method',
       cell: (item) => (
-        <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs text-slate-700 font-medium">
+        <span className="inline-flex rounded-[3.75px] bg-[#efe9e0] border border-[#c7bcaf] px-2 py-0.5 text-xs text-[#211b15] font-medium">
           {item.paymentMethod}
         </span>
       ),
     },
     {
       header: 'Amount Paid',
-      cell: (item) => <MoneyDisplay amount={item.amount} size="sm" className="font-bold text-emerald-700" />,
+      cell: (item) => <MoneyDisplay amount={item.amount} size="sm" className="font-bold text-[#2b4c2b]" />,
     },
     {
       header: 'Allocation Status',
@@ -128,16 +132,16 @@ export default function PaymentsPage() {
         />
 
         {successNotice && (
-          <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+          <div className="flex items-center justify-between rounded-[7.5px] border border-[#c5d8c4] bg-[#eef5ee] p-4 text-[#2b4c2b] shadow-xs font-sans">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <CheckCircle2 className="h-5 w-5 text-[#7a9779]" />
               <span className="text-sm">
-                <strong>Payment Logged:</strong> Payment allocation recorded and balance recalculated.
+                <strong>Payment Logged:</strong> Payment allocation recorded and balance settled.
               </span>
             </div>
             <button
               onClick={() => setSuccessNotice(false)}
-              className="text-xs font-semibold text-emerald-700 hover:underline"
+              className="text-xs font-bold text-[#2b4c2b] hover:underline"
             >
               Dismiss
             </button>
@@ -153,16 +157,16 @@ export default function PaymentsPage() {
         {/* Record Payment Modal */}
         {isRecordModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans"
             role="dialog"
             aria-modal="true"
           >
-            <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900">Record Manual Payment</h3>
+            <div className="w-full max-w-lg rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+              <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
+                <h3 className="font-display text-2xl font-bold text-[#211b15]">RECORD MANUAL PAYMENT</h3>
                 <button
                   onClick={() => setIsRecordModalOpen(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-[#50463c] hover:text-[#211b15]"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -188,7 +192,7 @@ export default function PaymentsPage() {
                 </FormField>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[#efe9e0]">
                 <Button variant="outline" size="md" onClick={() => setIsRecordModalOpen(false)}>
                   Cancel
                 </Button>

@@ -20,26 +20,26 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     <div className={cn('mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between', className)}>
       <div className="space-y-1">
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-1" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-xs text-[#50463c] mb-1 font-sans font-medium" aria-label="Breadcrumb">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
-                {idx > 0 && <span>/</span>}
+                {idx > 0 && <span className="text-[#96897b]">/</span>}
                 {crumb.href ? (
-                  <a href={crumb.href} className="hover:text-slate-600 transition-colors">
+                  <a href={crumb.href} className="hover:text-[#8c591b] transition-colors">
                     {crumb.label}
                   </a>
                 ) : (
-                  <span className="text-slate-600 font-medium">{crumb.label}</span>
+                  <span className="text-[#211b15] font-bold">{crumb.label}</span>
                 )}
               </React.Fragment>
             ))}
           </nav>
         )}
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+        <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#211b15] tracking-tight">
           {title}
         </h1>
         {description && (
-          <p className="text-sm text-slate-500 max-w-2xl">{description}</p>
+          <p className="text-sm text-[#50463c] max-w-2xl font-sans leading-relaxed">{description}</p>
         )}
       </div>
 

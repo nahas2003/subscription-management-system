@@ -29,7 +29,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen bg-[#fcfaf1] text-[#211b15] font-sans">
       {/* Sidebar navigation */}
       <AppSidebar
         role={role}

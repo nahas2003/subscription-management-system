@@ -4,9 +4,9 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
+import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
 
 interface StaffInvoice {
   id: string;
@@ -19,22 +19,22 @@ interface StaffInvoice {
   status: InvoiceStatus;
 }
 
-const mockStaffInvoices: StaffInvoice[] = [
+const mockInvoices: StaffInvoice[] = [
   {
-    id: 'inv-01',
+    id: 'inv-101',
     invoiceNumber: 'INV-2026-0042',
     customerName: 'Apex Technologies Pvt Ltd',
-    issueDate: '2026-10-25',
+    issueDate: '2026-10-22',
     dueDate: '2026-11-05',
     total: 17700,
     balanceDue: 17700,
     status: 'Confirmed',
   },
   {
-    id: 'inv-02',
+    id: 'inv-102',
     invoiceNumber: 'INV-2026-0038',
     customerName: 'Malabar Retailers Ltd',
-    issueDate: '2026-10-05',
+    issueDate: '2026-10-06',
     dueDate: '2026-10-20',
     total: 35400,
     balanceDue: 35400,
@@ -47,7 +47,7 @@ export default function StaffInvoicesPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.invoiceNumber}
         </span>
       ),
@@ -55,7 +55,7 @@ export default function StaffInvoicesPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Issue Date',
@@ -67,7 +67,7 @@ export default function StaffInvoicesPage() {
     },
     {
       header: 'Total',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-bold" />,
     },
     {
       header: 'Balance Due',
@@ -75,7 +75,7 @@ export default function StaffInvoicesPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
         />
       ),
     },
@@ -94,13 +94,13 @@ export default function StaffInvoicesPage() {
     >
       <div className="space-y-6">
         <PageHeader
-          title="Invoices"
-          description="View recurring customer invoices and overdue accounts."
+          title="Invoices Queue"
+          description="Track confirmed and overdue customer invoices ready for manual payment collection."
         />
 
         <DataTable
           columns={columns}
-          data={mockStaffInvoices}
+          data={mockInvoices}
           keyExtractor={(item) => item.id}
         />
       </div>

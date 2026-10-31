@@ -4,61 +4,61 @@ import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge, SubscriptionStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, FileText, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Plus } from 'lucide-react';
 
 interface QuotationRecord {
   id: string;
   quotationNumber: string;
   customerName: string;
   planName: string;
-  createdAt: string;
-  validUntil: string;
   subtotal: number;
   taxAmount: number;
   total: number;
-  status: 'Draft' | 'Quotation' | 'Confirmed';
+  status: SubscriptionStatus;
+  createdAt: string;
+  validUntil: string;
 }
 
 const mockQuotations: QuotationRecord[] = [
   {
-    id: 'quo-01',
-    quotationNumber: 'QUO-2026-0031',
-    customerName: 'Cochin Tech Solutions',
-    planName: 'Enterprise Annual License',
-    createdAt: '2026-10-20',
-    validUntil: '2026-11-05',
-    subtotal: 100000,
-    taxAmount: 18000,
-    total: 118000,
-    status: 'Quotation',
-  },
-  {
-    id: 'quo-02',
-    quotationNumber: 'QUO-2026-0028',
+    id: 'quot-01',
+    quotationNumber: 'QTN-2026-0081',
     customerName: 'Apex Technologies Pvt Ltd',
-    planName: 'Pro Monthly Support Plan',
-    createdAt: '2026-09-15',
-    validUntil: '2026-09-30',
-    subtotal: 15000,
-    taxAmount: 2700,
-    total: 17700,
-    status: 'Confirmed',
-  },
-  {
-    id: 'quo-03',
-    quotationNumber: 'QUO-2026-0035',
-    customerName: 'Kerala Spice Exporters',
-    planName: 'Quality Management System',
-    createdAt: '2026-10-30',
-    validUntil: '2026-11-15',
+    planName: 'Enterprise Annual Plan',
     subtotal: 100000,
     taxAmount: 18000,
     total: 118000,
+    status: 'Active',
+    createdAt: '2026-01-10',
+    validUntil: '2026-02-10',
+  },
+  {
+    id: 'quot-02',
+    quotationNumber: 'QTN-2026-0084',
+    customerName: 'Kochi Logistics Hub',
+    planName: 'Standard Monthly Plan',
+    subtotal: 20000,
+    taxAmount: 3600,
+    total: 23600,
+    status: 'Confirmed',
+    createdAt: '2026-10-01',
+    validUntil: '2026-11-01',
+  },
+  {
+    id: 'quot-03',
+    quotationNumber: 'QTN-2026-0087',
+    customerName: 'Kerala Ayurveda Solutions',
+    planName: 'Starter Quarterly',
+    subtotal: 8000,
+    taxAmount: 1440,
+    total: 9440,
     status: 'Draft',
+    createdAt: '2026-10-18',
+    validUntil: '2026-11-18',
   },
 ];
 
@@ -67,7 +67,7 @@ export default function QuotationsPage() {
     {
       header: 'Quotation #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.quotationNumber}
         </span>
       ),
@@ -76,8 +76,8 @@ export default function QuotationsPage() {
       header: 'Customer',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.customerName}</div>
-          <div className="text-xs text-slate-500">{item.planName}</div>
+          <div className="font-bold text-[#211b15]">{item.customerName}</div>
+          <div className="text-xs text-[#96897b]">{item.planName}</div>
         </div>
       ),
     },
@@ -95,7 +95,7 @@ export default function QuotationsPage() {
     },
     {
       header: 'Total Value',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-bold" />,
     },
     {
       header: 'Status',
@@ -113,14 +113,14 @@ export default function QuotationsPage() {
       <div className="space-y-6">
         <PageHeader
           title="Customer Quotations"
-          description="Prepare, send, and confirm subscription quotations following the Draft → Quotation → Confirmed workflow."
+          description="Draft and manage subscription sales estimates with automatic 18% GST calculation before conversion to active orders."
           action={
             <Button
               variant="primary"
               size="md"
               leftIcon={<Plus className="h-4 w-4" />}
             >
-              Draft Quotation
+              New Quotation
             </Button>
           }
         />
