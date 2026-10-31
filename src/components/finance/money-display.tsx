@@ -5,6 +5,7 @@ interface MoneyDisplayProps {
   amount: number;
   className?: string;
   isPositiveGood?: boolean;
+  size?: string;
 }
 
 /**
