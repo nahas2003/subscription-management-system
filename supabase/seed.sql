@@ -50,7 +50,7 @@ on conflict (id) do nothing;
 insert into public.products (id, name, description, product_type, sales_price, cost_price, is_active)
 values
   (
-    'p1111111-1111-1111-1111-111111111111',
+    'ba111111-1111-1111-1111-111111111111',
     'BrightLoop Cloud ERP Core',
     'Complete multi-tenant ERP platform subscription per instance.',
     'subscription',
@@ -59,7 +59,7 @@ values
     true
   ),
   (
-    'p2222222-2222-2222-2222-222222222222',
+    'ba222222-2222-2222-2222-222222222222',
     'Priority SLA Support Add-on',
     '24/7 technical helpdesk, dedicated account manager, and 1-hour SLA response.',
     'service',
@@ -68,7 +68,7 @@ values
     true
   ),
   (
-    'p3333333-3333-3333-3333-333333333333',
+    'ba333333-3333-3333-3333-333333333333',
     'Implementation & Customization Pack',
     'One-time onboarding and data migration package.',
     'service',
