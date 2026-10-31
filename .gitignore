@@ -1,3 +1,7 @@
+# Documentation - local reference only, do not track in git
+docs/
+doc/
+
 # Dependencies
 node_modules/
 .pnp
