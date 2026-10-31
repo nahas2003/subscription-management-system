@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -8,7 +8,8 @@ import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { Button } from '@/components/ui/Button';
-import { Eye } from 'lucide-react';
+import { Receipt, Eye, FileText, Download, CheckCircle2 } from 'lucide-react';
+import { getCustomerPortalData } from '@/lib/actions/portal';
 
 interface InvoiceLineItem {
   description: string;
@@ -25,6 +26,7 @@ interface InvoiceDetailItem {
   dueDate: string;
   subtotal: number;
   taxAmount: number;
+  discountAmount?: number;
   total: number;
   amountPaid: number;
   balanceDue: number;
@@ -36,7 +38,7 @@ const mockInvoices: InvoiceDetailItem[] = [
   {
     id: 'inv-01',
     invoiceNumber: 'INV-2026-0042',
-    issueDate: '2026-10-22',
+    issueDate: '2026-10-25',
     dueDate: '2026-11-05',
     subtotal: 15000,
     taxAmount: 2700,
@@ -46,7 +48,7 @@ const mockInvoices: InvoiceDetailItem[] = [
     status: 'Confirmed',
     lines: [
       {
-        description: 'Managed Cloud Infrastructure - Pro Support (Oct 2026)',
+        description: 'Managed Cloud Infrastructure - Pro Support (Nov 2026)',
         qty: 1,
         unitPrice: 15000,
         taxRate: 0.18,
@@ -57,7 +59,7 @@ const mockInvoices: InvoiceDetailItem[] = [
   {
     id: 'inv-02',
     invoiceNumber: 'INV-2026-0019',
-    issueDate: '2026-09-21',
+    issueDate: '2026-09-25',
     dueDate: '2026-10-05',
     subtotal: 15000,
     taxAmount: 2700,
@@ -67,7 +69,7 @@ const mockInvoices: InvoiceDetailItem[] = [
     status: 'Paid',
     lines: [
       {
-        description: 'Managed Cloud Infrastructure - Pro Support (Sep 2026)',
+        description: 'Managed Cloud Infrastructure - Pro Support (Oct 2026)',
         qty: 1,
         unitPrice: 15000,
         taxRate: 0.18,
@@ -100,6 +102,49 @@ const mockInvoices: InvoiceDetailItem[] = [
 
 export default function CustomerInvoicesPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceDetailItem | null>(null);
+  const [invoices, setInvoices] = useState<InvoiceDetailItem[]>(mockInvoices);
+  const [customerName, setCustomerName] = useState('Apex Technologies Pvt Ltd');
+  const [customerEmail, setCustomerEmail] = useState('billing@apextech.in');
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getCustomerPortalData();
+        if (data?.customer) {
+          setCustomerName(data.customer.name);
+          setCustomerEmail(data.customer.email);
+        }
+        if (data?.invoices && data.invoices.length > 0) {
+          const mapped: InvoiceDetailItem[] = data.invoices.map((i) => ({
+            id: i.id,
+            invoiceNumber: i.invoice_number,
+            issueDate: i.invoice_date,
+            dueDate: i.due_date || i.invoice_date,
+            subtotal: i.subtotal,
+            taxAmount: i.tax_total,
+            discountAmount: i.discount_total || 0,
+            total: i.total,
+            amountPaid: i.amount_paid ?? (i.total - (i.balance_due || 0)),
+            balanceDue: i.balance_due,
+            status: (i.status === 'paid' ? 'Paid' : i.status === 'confirmed' ? 'Confirmed' : 'Draft') as InvoiceStatus,
+            lines: [
+              {
+                description: `Recurring Subscription Billing Statement (${i.invoice_number})`,
+                qty: 1,
+                unitPrice: i.subtotal,
+                taxRate: 0.18,
+                lineTotal: i.total,
+              },
+            ],
+          }));
+          setInvoices(mapped);
+        }
+      } catch (err) {
+        console.error('Error loading invoices:', err);
+      }
+    }
+    loadData();
+  }, []);
 
   const columns: Column<InvoiceDetailItem>[] = [
     {
@@ -136,7 +181,7 @@ export default function CustomerInvoicesPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#7a9779]'}
         />
       ),
     },
@@ -145,17 +190,15 @@ export default function CustomerInvoicesPage() {
       cell: (item) => <StatusBadge status={item.status} size="sm" />,
     },
     {
-      header: 'Action',
-      align: 'right',
+      header: 'Statement',
       cell: (item) => (
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={() => setSelectedInvoice(item)}
-          leftIcon={<Eye className="h-3.5 w-3.5" />}
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#8c591b] hover:text-[#6c3200] transition-colors"
         >
-          View Statement
-        </Button>
+          <Eye className="h-3.5 w-3.5" />
+          <span>View</span>
+        </button>
       ),
     },
   ];
@@ -164,12 +207,12 @@ export default function CustomerInvoicesPage() {
     <AppShell
       role="customer"
       currentPath="/portal/invoices"
-      user={{ name: 'Apex Technologies Pvt Ltd', email: 'billing@apextech.in', role: 'customer' }}
+      user={{ name: customerName, email: customerEmail, role: 'customer' }}
       title="My Invoices"
     >
       <div className="space-y-6">
         <PageHeader
-          title="Invoices & Statements"
+          title="Invoices &amp; Statements"
           description="View recurring billing statements, tax breakdowns, and settlement history."
           breadcrumbs={[
             { label: 'Portal', href: '/portal' },
@@ -179,7 +222,7 @@ export default function CustomerInvoicesPage() {
 
         <DataTable
           columns={columns}
-          data={mockInvoices}
+          data={invoices}
           keyExtractor={(item) => item.id}
         />
 
@@ -201,7 +244,7 @@ export default function CustomerInvoicesPage() {
                     <StatusBadge status={selectedInvoice.status} size="md" />
                   </div>
                   <div className="text-xs text-[#96897b]">
-                    Billed to: <strong className="text-[#211b15]">Apex Technologies Pvt Ltd</strong> (GSTIN: 32AAAAA0000A1Z5)
+                    Billed to: <strong className="text-[#211b15]">{customerName}</strong> (GSTIN: 32AAAAA0000A1Z5)
                   </div>
                 </div>
 
@@ -225,49 +268,58 @@ export default function CustomerInvoicesPage() {
                   </thead>
                   <tbody className="divide-y divide-[#efe9e0] text-[#211b15]">
                     {selectedInvoice.lines.map((line, idx) => (
-                      <tr key={idx}>
-                        <td className="px-3 py-2.5 font-medium">{line.description}</td>
-                        <td className="px-3 py-2.5 text-center">{line.qty}</td>
-                        <td className="px-3 py-2.5 text-right"><MoneyDisplay amount={line.unitPrice} size="sm" /></td>
-                        <td className="px-3 py-2.5 text-right font-mono">{(line.taxRate * 100).toFixed(0)}%</td>
-                        <td className="px-3 py-2.5 text-right font-bold"><MoneyDisplay amount={line.lineTotal} size="sm" /></td>
+                      <tr key={idx} className="hover:bg-[#fcfaf1]">
+                        <td className="px-3 py-2 font-medium">{line.description}</td>
+                        <td className="px-3 py-2 text-center">{line.qty}</td>
+                        <td className="px-3 py-2 text-right">
+                          <MoneyDisplay amount={line.unitPrice} size="sm" />
+                        </td>
+                        <td className="px-3 py-2 text-right">{(line.taxRate * 100).toFixed(0)}%</td>
+                        <td className="px-3 py-2 text-right font-semibold">
+                          <MoneyDisplay amount={line.lineTotal} size="sm" />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              {/* Totals Breakdown */}
+              {/* Financial Summary Breakdown */}
               <div className="flex justify-end">
-                <div className="w-64 space-y-2 text-xs">
-                  <div className="flex justify-between text-[#50463c]">
-                    <span>Taxable Subtotal:</span>
+                <div className="w-64 space-y-1.5 text-xs text-[#50463c]">
+                  <div className="flex justify-between">
+                    <span>Taxable Subtotal</span>
                     <MoneyDisplay amount={selectedInvoice.subtotal} size="sm" />
                   </div>
-                  <div className="flex justify-between text-[#50463c]">
-                    <span>Applicable GST (18%):</span>
+                  <div className="flex justify-between">
+                    <span>Applicable GST (18%)</span>
                     <MoneyDisplay amount={selectedInvoice.taxAmount} size="sm" />
                   </div>
-                  <div className="flex justify-between text-[#211b15] font-bold border-t border-[#efe9e0] pt-2 text-sm">
-                    <span>Total Invoice:</span>
-                    <MoneyDisplay amount={selectedInvoice.total} size="lg" />
+                  <div className="flex justify-between pt-1 border-t border-[#efe9e0] font-bold text-sm text-[#211b15]">
+                    <span>Grand Total</span>
+                    <MoneyDisplay amount={selectedInvoice.total} size="sm" />
                   </div>
-                  <div className="flex justify-between text-[#50463c]">
-                    <span>Amount Paid:</span>
+                  <div className="flex justify-between text-xs text-[#7a9779]">
+                    <span>Amount Paid</span>
                     <MoneyDisplay amount={selectedInvoice.amountPaid} size="sm" />
                   </div>
-                  <div className="flex justify-between text-[#8f2115] font-bold bg-[#fcedeb] p-2 rounded-[3.75px] border border-[#e8b0a9]">
-                    <span>Balance Due:</span>
-                    <MoneyDisplay amount={selectedInvoice.balanceDue} size="md" className="text-[#b83a2b]" />
+                  <div className="flex justify-between pt-1 border-t border-[#efe9e0] font-bold text-sm text-[#b83a2b]">
+                    <span>Balance Due</span>
+                    <MoneyDisplay amount={selectedInvoice.balanceDue} size="sm" />
                   </div>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex justify-end gap-3 border-t border-[#efe9e0] pt-4">
-                <Button variant="outline" size="md" onClick={() => setSelectedInvoice(null)}>
-                  Close
-                </Button>
+              <div className="flex justify-between items-center pt-3 border-t border-[#efe9e0]">
+                <div className="text-[11px] text-[#96897b]">
+                  Payment methods accepted: Direct Bank Transfer (NEFT/RTGS) &amp; Corporate Cheque.
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setSelectedInvoice(null)}>
+                    Close
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

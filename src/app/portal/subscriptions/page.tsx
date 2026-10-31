@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -8,7 +8,8 @@ import { StatusBadge, SubscriptionStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { Button } from '@/components/ui/Button';
-import { Repeat, Eye } from 'lucide-react';
+import { Repeat, Eye, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { getCustomerPortalData } from '@/lib/actions/portal';
 
 interface SubscriptionDetail {
   id: string;
@@ -52,6 +53,39 @@ const mockSubscriptions: SubscriptionDetail[] = [
 
 export default function CustomerSubscriptionsPage() {
   const [selectedSub, setSelectedSub] = useState<SubscriptionDetail | null>(null);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionDetail[]>(mockSubscriptions);
+  const [customerName, setCustomerName] = useState('Apex Technologies Pvt Ltd');
+  const [customerEmail, setCustomerEmail] = useState('billing@apextech.in');
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getCustomerPortalData();
+        if (data?.customer) {
+          setCustomerName(data.customer.name);
+          setCustomerEmail(data.customer.email);
+        }
+        if (data?.subscriptions && data.subscriptions.length > 0) {
+          const mapped: SubscriptionDetail[] = data.subscriptions.map((s, idx) => ({
+            id: s.id,
+            subscriptionNumber: s.subscription_number || `SUB-${new Date(s.created_at).getFullYear()}-${String(idx + 1).padStart(4, '0')}`,
+            productName: 'BrightLoop Enterprise Suite',
+            planName: 'Cloud SaaS Plan',
+            frequency: 'Monthly',
+            recurringPrice: 15000,
+            startDate: s.start_date || s.created_at.slice(0, 10),
+            nextRenewal: s.next_billing_date || s.expiry_date || '2027-01-01',
+            status: (s.status === 'active' ? 'Active' : s.status === 'draft' ? 'Draft' : 'Closed') as SubscriptionStatus,
+            terms: s.payment_terms || 'Standard subscription terms apply with INR billing.',
+          }));
+          setSubscriptions(mapped);
+        }
+      } catch (err) {
+        console.error('Error loading subscriptions:', err);
+      }
+    }
+    loadData();
+  }, []);
 
   const columns: Column<SubscriptionDetail>[] = [
     {
@@ -115,7 +149,7 @@ export default function CustomerSubscriptionsPage() {
     <AppShell
       role="customer"
       currentPath="/portal/subscriptions"
-      user={{ name: 'Apex Technologies Pvt Ltd', email: 'billing@apextech.in', role: 'customer' }}
+      user={{ name: customerName, email: customerEmail, role: 'customer' }}
       title="My Subscriptions"
     >
       <div className="space-y-6">
@@ -130,7 +164,7 @@ export default function CustomerSubscriptionsPage() {
 
         <DataTable
           columns={columns}
-          data={mockSubscriptions}
+          data={subscriptions}
           keyExtractor={(item) => item.id}
         />
 
@@ -175,7 +209,7 @@ export default function CustomerSubscriptionsPage() {
               </div>
 
               <div className="rounded-[3.75px] bg-[#efe9e0]/40 p-3.5 border border-[#c7bcaf] text-xs text-[#50463c]">
-                <span className="font-bold text-[#211b15] block mb-1">Contract Terms & Notes:</span>
+                <span className="font-bold text-[#211b15] block mb-1">Contract Terms &amp; Notes:</span>
                 {selectedSub.terms}
               </div>
 

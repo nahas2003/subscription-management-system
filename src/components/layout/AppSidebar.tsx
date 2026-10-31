@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -188,11 +189,13 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                 </div>
               )}
               {section.items.map((item) => {
-                const isActive = currentPath === item.href || (item.href !== '/portal' && currentPath.startsWith(item.href));
+                const isActive =
+                  currentPath === item.href ||
+                  (item.href !== '/portal' && item.href !== '/admin/dashboard' && item.href !== '/staff/dashboard' && currentPath.startsWith(item.href));
                 const Icon = item.icon;
 
                 return (
-                  <a
+                  <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
@@ -226,7 +229,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                         {item.badge}
                       </span>
                     )}
-                  </a>
+                  </Link>
                 );
               })}
             </div>

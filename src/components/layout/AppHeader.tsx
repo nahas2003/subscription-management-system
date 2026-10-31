@@ -1,6 +1,10 @@
+'use client';
+
 import React from 'react';
-import { Menu, User, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { Menu, User, LogOut, ArrowLeftRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { clearSessionUser } from '@/lib/auth';
 
 export type UserRole = 'admin' | 'staff' | 'customer';
 
@@ -29,6 +33,15 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     customer: 'bg-[#eef5ee] text-[#2b4c2b] border-[#c5d8c4]',
   };
 
+  const handleLogout = () => {
+    clearSessionUser();
+    if (onLogout) {
+      onLogout();
+    } else {
+      window.location.href = '/';
+    }
+  };
+
   return (
     <header
       className={cn(
@@ -55,6 +68,47 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Quick Role Switcher for Evaluation */}
+        <div className="hidden sm:flex items-center gap-1.5 text-xs bg-[#fcfaf1] border border-[#efe9e0] rounded-[3.75px] p-1">
+          <span className="text-[#96897b] pl-1.5 text-[11px] font-bold flex items-center gap-1">
+            <ArrowLeftRight className="h-3 w-3" />
+            Switch View:
+          </span>
+          <Link
+            href="/admin/dashboard"
+            className={cn(
+              'px-2 py-0.5 rounded-[3.75px] text-[11px] font-bold transition-colors',
+              user.role === 'admin'
+                ? 'bg-[#252a23] text-white shadow-xs'
+                : 'text-[#50463c] hover:text-[#211b15]'
+            )}
+          >
+            Admin
+          </Link>
+          <Link
+            href="/staff/dashboard"
+            className={cn(
+              'px-2 py-0.5 rounded-[3.75px] text-[11px] font-bold transition-colors',
+              user.role === 'staff'
+                ? 'bg-[#e8b672] text-[#211b15] shadow-xs'
+                : 'text-[#50463c] hover:text-[#211b15]'
+            )}
+          >
+            Staff
+          </Link>
+          <Link
+            href="/portal"
+            className={cn(
+              'px-2 py-0.5 rounded-[3.75px] text-[11px] font-bold transition-colors',
+              user.role === 'customer'
+                ? 'bg-[#7a9779] text-white shadow-xs'
+                : 'text-[#50463c] hover:text-[#211b15]'
+            )}
+          >
+            Customer
+          </Link>
+        </div>
+
         {/* Role badge */}
         <span
           className={cn(
@@ -65,7 +119,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {user.role}
         </span>
 
-        {/* User profile dropdown info */}
+        {/* User profile info */}
         <div className="flex items-center gap-2 pl-3 border-l border-[#efe9e0]">
           <div className="flex h-8 w-8 items-center justify-center rounded-[3.75px] bg-[#efe9e0] text-[#211b15] font-bold text-xs border border-[#c7bcaf]/40">
             <User className="h-4 w-4" />
@@ -81,16 +135,14 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         </div>
 
         {/* Logout action */}
-        {onLogout && (
-          <button
-            onClick={onLogout}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-[3.75px] text-[#50463c] hover:bg-[#fdf6ed] hover:text-[#8c591b] transition-colors ml-1"
-            title="Log out"
-            aria-label="Log out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
-        )}
+        <button
+          onClick={handleLogout}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-[3.75px] text-[#50463c] hover:bg-[#fcedeb] hover:text-[#b83a2b] transition-colors ml-1"
+          title="Log out from session"
+          aria-label="Log out"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
     </header>
   );

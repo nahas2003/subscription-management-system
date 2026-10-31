@@ -5,6 +5,7 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -66,6 +67,32 @@ module.exports = {
           light: '#faebd2',
         },
         pure: '#ffffff',
+        // Fallback compatibility tokens for teammates
+        brand: {
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
+          950: "#172554",
+        },
+        background: '#fcfaf1',
+        surface: {
+          DEFAULT: '#FFFFFF',
+          dark: "#0f172a",
+          card: "#1e293b",
+          hover: "#334155",
+          border: "#334155",
+        },
+        text: {
+          primary: '#211b15',
+          secondary: '#50463c',
+        },
       },
       fontFamily: {
         display: ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],

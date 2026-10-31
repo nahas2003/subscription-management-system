@@ -3,15 +3,12 @@ node_modules/
 .pnp
 .pnp.js
 
-# Documentation
-docs/
-doc/
-
 # Environment variables and secrets - NEVER COMMIT SECRETS
 .env
 .env*.local
 .env.production
 .env.development
+!.env.example
 
 # Production and build outputs
 .next/
@@ -41,3 +38,8 @@ Thumbs.db
 # Local cache
 *.tsbuildinfo
 next-env.d.ts
+
+# Documentation & Markdown files - Keep local only, do not push
+doc/
+docs/
+*.md

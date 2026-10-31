@@ -93,11 +93,14 @@ export default function HomePage() {
             <a href="#login-section" className="hover:text-[#211b15] transition-colors">
               Single Login
             </a>
+            <a href="#operations" className="hover:text-[#211b15] transition-colors">
+              Operations
+            </a>
             <a href="#features" className="hover:text-[#211b15] transition-colors">
               Billing Engine
             </a>
             <a href="#security" className="hover:text-[#211b15] transition-colors">
-              Compliance & RBAC
+              Compliance &amp; RBAC
             </a>
           </nav>
 
@@ -207,7 +210,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Interactive Role Switcher Tabs (For learning what each view contains) */}
+          {/* Interactive Role Switcher Tabs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 max-w-xl mx-auto p-1.5 rounded-[7.5px] bg-[#fcfaf1] border border-[#efe9e0]">
             <button
               onClick={() => setActiveTabRole('admin')}
@@ -284,7 +287,7 @@ export default function HomePage() {
                 <div className="space-y-2 pt-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#b83a2b] flex items-center gap-2">
                     <AlertCircle className="h-3.5 w-3.5 text-[#b83a2b]" />
-                    Restricted & Barred from Seeing:
+                    Restricted &amp; Barred from Seeing:
                   </h4>
                   <ul className="space-y-1 text-xs text-[#50463c]">
                     {activeRoleData.cannotAccess.map((item, idx) => (
@@ -354,7 +357,7 @@ export default function HomePage() {
                 {activeTabRole === 'admin' && (
                   <div className="text-xs space-y-1 text-[#50463c]">
                     <div className="flex items-center justify-between py-1 border-b border-[#efe9e0]">
-                      <span>Catalogue & Plans</span>
+                      <span>Catalogue &amp; Plans</span>
                       <strong className="text-[#211b15]">4 Products, 4 Plans</strong>
                     </div>
                     <div className="flex items-center justify-between py-1 border-b border-[#efe9e0]">
@@ -387,7 +390,7 @@ export default function HomePage() {
                   <div className="text-xs space-y-1 text-[#50463c]">
                     <div className="flex items-center justify-between py-1 border-b border-[#efe9e0]">
                       <span>Subscription Renewal</span>
-                      <strong className="text-[#211b15]">Cycle & Price Status</strong>
+                      <strong className="text-[#211b15]">Cycle &amp; Price Status</strong>
                     </div>
                     <div className="flex items-center justify-between py-1 border-b border-[#efe9e0]">
                       <span>18% GST Statements</span>
@@ -539,7 +542,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Core Platform Architecture Pillars */}
+      {/* 5. Direct Operations Suite Bar */}
+      <section id="operations" className="py-12 border-t border-[#efe9e0] bg-[#efe9e0]/40 px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="p-5 sm:p-6 rounded-[7.5px] bg-[#efe9e0] border border-[#c7bcaf] shadow-xs">
+            <div className="text-xs uppercase tracking-wider font-bold text-[#8c591b] mb-3 text-center sm:text-left sm:pl-1">
+              Operations &amp; Subscription Management Direct Links
+            </div>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+              <Link
+                href="/subscriptions"
+                className="bg-[#252a23] hover:bg-[#434f40] text-white text-xs font-bold px-4 py-2.5 rounded-[3.75px] transition-all"
+              >
+                Subscriptions &amp; Lifecycle
+              </Link>
+              <Link
+                href="/quotations"
+                className="bg-[#e8b672] hover:bg-[#dba35c] text-[#211b15] text-xs font-bold px-4 py-2.5 rounded-[3.75px] transition-all"
+              >
+                Quotations &amp; Conversion
+              </Link>
+              <Link
+                href="/customers"
+                className="bg-white hover:bg-[#fcfaf1] text-[#211b15] border border-[#c7bcaf] text-xs font-bold px-3.5 py-2.5 rounded-[3.75px] transition-all"
+              >
+                Customers
+              </Link>
+              <Link
+                href="/products"
+                className="bg-white hover:bg-[#fcfaf1] text-[#211b15] border border-[#c7bcaf] text-xs font-bold px-3.5 py-2.5 rounded-[3.75px] transition-all"
+              >
+                Products &amp; Variants
+              </Link>
+              <Link
+                href="/plans"
+                className="bg-white hover:bg-[#fcfaf1] text-[#211b15] border border-[#c7bcaf] text-xs font-bold px-3.5 py-2.5 rounded-[3.75px] transition-all"
+              >
+                Recurring Plans
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Core Platform Architecture Pillars */}
       <section id="features" className="py-16 sm:py-20 border-t border-[#efe9e0] bg-white px-4 sm:px-8">
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
@@ -598,7 +644,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. Charcoal Olive Footer */}
+      {/* 7. Charcoal Olive Footer */}
       <footer id="security" className="w-full bg-[#252a23] text-[#efe9e0] py-12 px-4 sm:px-8 font-sans border-t border-[#434f40]">
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-[#434f40] text-xs">
@@ -633,13 +679,13 @@ export default function HomePage() {
                 <li><Link href="/admin/products" className="hover:text-white transition-colors">Product Catalogue</Link></li>
                 <li><Link href="/admin/plans" className="hover:text-white transition-colors">Subscription Plans</Link></li>
                 <li><Link href="/admin/invoices" className="hover:text-white transition-colors">Tax Invoices (18% GST)</Link></li>
-                <li><Link href="/admin/reports" className="hover:text-white transition-colors">Fiscal Reports & MRR</Link></li>
+                <li><Link href="/admin/reports" className="hover:text-white transition-colors">Fiscal Reports &amp; MRR</Link></li>
               </ul>
             </div>
 
             {/* Links 3: Compliance & Tech */}
             <div className="space-y-2">
-              <span className="font-bold uppercase tracking-wider text-white">Compliance & Tech</span>
+              <span className="font-bold uppercase tracking-wider text-white">Compliance &amp; Tech</span>
               <ul className="space-y-1.5 text-[#96897b]">
                 <li><span className="text-[#efe9e0]">Next.js 14 App Router</span></li>
                 <li><span className="text-[#efe9e0]">TypeScript Strict Typing</span></li>
