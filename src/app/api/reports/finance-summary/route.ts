@@ -11,7 +11,7 @@ import { errorResponse, successResponse } from '@/lib/api-response';
 import { store } from '@/lib/store';
 import { NextResponse } from 'next/server';
 
-export async function handleGetFinanceSummary(queryParams: {
+async function handleGetFinanceSummary(queryParams: {
   periodStart?: string;
   periodEnd?: string;
   asOfDate?: string;

@@ -9,7 +9,7 @@ import { invoiceRepository } from '@/features/invoices/invoice-repository';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { NextResponse } from 'next/server';
 
-export async function handleGetInvoices(queryParams: Record<string, string | undefined>) {
+async function handleGetInvoices(queryParams: Record<string, string | undefined>) {
   try {
     const filters = {
       customerId: queryParams.customerId,
@@ -27,7 +27,7 @@ export async function handleGetInvoices(queryParams: Record<string, string | und
   }
 }
 
-export async function handlePostInvoice(payload: any) {
+async function handlePostInvoice(payload: any) {
   try {
     if (!payload.customerId) {
       return errorResponse('Customer ID is required', 'VALIDATION_ERROR', { customerId: 'Required' });

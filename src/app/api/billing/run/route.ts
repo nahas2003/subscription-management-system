@@ -10,7 +10,7 @@ import { errorResponse, successResponse } from '@/lib/api-response';
 import { store } from '@/lib/store';
 import { NextResponse } from 'next/server';
 
-export async function handleRunBilling(payload: {
+async function handleRunBilling(payload: {
   subscriptions?: any[];
   asOfDate?: string;
   paymentTermsDays?: number;

@@ -8,7 +8,7 @@ import { discountService } from '@/features/discounts/discount-service';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { NextResponse } from 'next/server';
 
-export async function handleGetDiscounts(onlyActiveStr?: string) {
+async function handleGetDiscounts(onlyActiveStr?: string) {
   try {
     const onlyActive = onlyActiveStr !== 'false';
     const list = await discountService.listDiscounts(onlyActive);
@@ -18,7 +18,7 @@ export async function handleGetDiscounts(onlyActiveStr?: string) {
   }
 }
 
-export async function handlePostDiscount(payload: any) {
+async function handlePostDiscount(payload: any) {
   try {
     if (!payload.name) {
       return errorResponse('Discount name is required', 'VALIDATION_ERROR', { name: 'Required' });

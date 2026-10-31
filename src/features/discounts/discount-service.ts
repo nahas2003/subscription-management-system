@@ -96,7 +96,7 @@ export const discountService = {
     const discount: Discount = {
       id,
       name: input.name,
-      code: input.code ? input.code.trim().toUpperCase() : undefined,
+      code: input.code ? input.code.trim().toUpperCase() : null,
       discount_type: input.discountType,
       value: input.value,
       minimum_purchase: input.minimumPurchase ?? null,

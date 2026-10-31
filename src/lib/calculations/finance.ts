@@ -125,7 +125,7 @@ export function calculateInvoiceTotals(params: {
  */
 export function calculateInvoiceBalance(params: {
   invoiceTotal: number;
-  allocations: Array<{ amount_allocated: number }>;
+  allocations: Array<{ amount_allocated?: number; amount?: number }>;
   currentStatus: InvoiceStatus;
 }): {
   amountPaid: number;
@@ -143,7 +143,7 @@ export function calculateInvoiceBalance(params: {
   }
 
   const amountPaid = roundTo2Decimals(
-    allocations.reduce((sum, a) => sum + Math.max(0, a.amount_allocated), 0)
+    allocations.reduce((sum, a) => sum + Math.max(0, (a.amount_allocated ?? a.amount ?? 0)), 0)
   );
   const balanceDue = roundTo2Decimals(Math.max(0, invoiceTotal - amountPaid));
 
