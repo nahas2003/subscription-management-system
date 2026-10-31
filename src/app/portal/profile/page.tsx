@@ -1,14 +1,37 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/Button';
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
-import { Building2, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
+import { Building2, ShieldCheck, Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
+import { updateCustomerProfile } from '@/lib/actions/auth';
 
 export default function CustomerProfilePage() {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleUpdate(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    const formData = new FormData(e.currentTarget);
+    const res = await updateCustomerProfile(formData);
+
+    if (res?.error) {
+      setError(res.error);
+    } else {
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 4000);
+    }
+    setLoading(false);
+  }
+
   return (
     <AppShell
       role="customer"
@@ -28,7 +51,20 @@ export default function CustomerProfilePage() {
           }
         />
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
+        {success && (
+          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            <span>Profile details updated successfully!</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleUpdate} className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-[#4F46E5]">
               <Building2 className="h-6 w-6" />
@@ -51,24 +87,28 @@ export default function CustomerProfilePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField label="Primary Billing Email">
-                <Input defaultValue="billing@apextech.in" leftIcon={<Mail className="h-4 w-4" />} />
+                <Input defaultValue="billing@apextech.in" disabled leftIcon={<Mail className="h-4 w-4" />} />
               </FormField>
               <FormField label="Phone Contact">
-                <Input defaultValue="+91 98470 12345" leftIcon={<Phone className="h-4 w-4" />} />
+                <Input name="phone" defaultValue="+91 98470 12345" leftIcon={<Phone className="h-4 w-4" />} />
               </FormField>
             </div>
 
             <FormField label="Registered Billing Address">
-              <Input defaultValue="Infopark Phase 2, Kakkanad, Kochi, Kerala 682030" leftIcon={<MapPin className="h-4 w-4" />} />
+              <Input
+                name="billingAddress"
+                defaultValue="Infopark Phase 2, Kakkanad, Kochi, Kerala 682030"
+                leftIcon={<MapPin className="h-4 w-4" />}
+              />
             </FormField>
           </div>
 
           <div className="flex justify-end pt-4 border-t border-slate-100">
-            <Button variant="primary" size="md">
-              Update Contact Details
+            <Button type="submit" variant="primary" size="md" disabled={loading}>
+              {loading ? 'Saving...' : 'Update Contact Details'}
             </Button>
           </div>
-        </div>
+        </form>
       </div>
     </AppShell>
   );

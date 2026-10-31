@@ -1,94 +1,222 @@
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ShieldCheck, Users, User, ArrowRight } from 'lucide-react';
+import { Layers, ShieldCheck, Users, User, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center items-center px-4 py-12">
-      <div className="max-w-3xl w-full text-center space-y-4 mb-10">
-        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#4F46E5] text-white shadow-md mb-2">
-          <Layers className="h-8 w-8" />
+    <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+      {/* Navigation Header */}
+      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
+              <Layers className="h-5 w-5" />
+            </div>
+            <span className="font-semibold text-lg tracking-tight">BrightLoop</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/subscriptions"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Subscriptions
+            </Link>
+            <Link
+              href="/quotations"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Quotations
+            </Link>
+            <Link
+              href="/customers"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden md:inline-block"
+            >
+              Customers
+            </Link>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden md:inline-block"
+            >
+              Products
+            </Link>
+            <Link
+              href="/auth/login"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/auth/register"
+              className="text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors shadow-md shadow-blue-500/10"
+            >
+              Customer Sign Up
+            </Link>
+          </div>
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-          Bright<span className="text-[#4F46E5]">Loop</span>
+      </header>
+
+      {/* Hero Section */}
+      <section className="max-w-6xl mx-auto px-6 py-16 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-6">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Odoo x Make-A-Ton 9.0 Hackathon 2026 &bull; BrightLoop Platform</span>
+        </div>
+        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+          Modern Subscription-to-Cash <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+            Lifecycle Automation
+          </span>
         </h1>
-        <p className="text-lg text-slate-600 max-w-xl mx-auto">
-          Unified Subscription Management System for Odoo x Make-A-Ton 9.0.
-          Select an interface role to explore the system:
+        <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          Unified recurring billing, catalog management, quotations, customer portal, and financial reconciliation in Indian Rupees (₹).
         </p>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
-        {/* Admin Card */}
-        <Link
-          href="/admin/dashboard"
-          className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-xs hover:border-[#4F46E5] hover:shadow-md transition-all"
-        >
-          <div className="space-y-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
-              <ShieldCheck className="h-6 w-6" />
+        {/* Interface Role Portals */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
+          {/* Admin Portal Card */}
+          <Link
+            href="/admin/dashboard"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/10 transition-all"
+          >
+            <div className="space-y-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <h2 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                Admin Portal
+              </h2>
+              <p className="text-sm text-slate-400">
+                Full executive oversight: revenue metrics, plans, catalogue, staff management, and system reports.
+              </p>
             </div>
-            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors">
-              Admin Portal
-            </h2>
-            <p className="text-sm text-slate-500">
-              Full executive oversight: revenue metrics, plans, catalogue, staff management, and system reports.
+            <div className="mt-6 flex items-center text-sm font-semibold text-purple-400 group-hover:gap-2 transition-all">
+              <span>Enter Admin Dashboard</span>
+              <ArrowRight className="h-4 w-4 ml-1" />
+            </div>
+          </Link>
+
+          {/* Staff Portal Card */}
+          <Link
+            href="/staff/dashboard"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10 transition-all"
+          >
+            <div className="space-y-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
+                <Users className="h-6 w-6" />
+              </div>
+              <h2 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                Staff Portal
+              </h2>
+              <p className="text-sm text-slate-400">
+                Operational execution: customer management, quotation generation, subscription lifecycle, and manual payments.
+              </p>
+            </div>
+            <div className="mt-6 flex items-center text-sm font-semibold text-blue-400 group-hover:gap-2 transition-all">
+              <span>Enter Staff Dashboard</span>
+              <ArrowRight className="h-4 w-4 ml-1" />
+            </div>
+          </Link>
+
+          {/* Customer Portal Card */}
+          <Link
+            href="/portal"
+            className="group flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:border-emerald-500 hover:shadow-xl hover:shadow-emerald-500/10 transition-all"
+          >
+            <div className="space-y-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                <User className="h-6 w-6" />
+              </div>
+              <h2 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">
+                Customer Portal
+              </h2>
+              <p className="text-sm text-slate-400">
+                Customer self-service: strictly isolated view of active subscriptions, invoices, and payments.
+              </p>
+            </div>
+            <div className="mt-6 flex items-center text-sm font-semibold text-emerald-400 group-hover:gap-2 transition-all">
+              <span>Enter Customer View</span>
+              <ArrowRight className="h-4 w-4 ml-1" />
+            </div>
+          </Link>
+        </div>
+
+        {/* Member 3 Direct Operations Suite Bar */}
+        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-12">
+          <div className="text-xs uppercase tracking-wider font-semibold text-slate-400 mb-3 text-center sm:text-left sm:pl-2">
+            Operations &amp; Subscription Management Quick Links
+          </div>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+            <Link
+              href="/subscriptions"
+              className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all shadow-md shadow-blue-600/20"
+            >
+              Subscriptions &amp; Lifecycle
+            </Link>
+            <Link
+              href="/quotations"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all shadow-md shadow-indigo-600/20"
+            >
+              Quotations &amp; Conversion
+            </Link>
+            <Link
+              href="/customers"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium px-3.5 py-2.5 rounded-lg transition-all"
+            >
+              Customers
+            </Link>
+            <Link
+              href="/products"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium px-3.5 py-2.5 rounded-lg transition-all"
+            >
+              Products &amp; Variants
+            </Link>
+            <Link
+              href="/plans"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium px-3.5 py-2.5 rounded-lg transition-all"
+            >
+              Recurring Plans
+            </Link>
+          </div>
+        </div>
+
+        {/* Feature Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left border-t border-slate-800/80 pt-12">
+          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60">
+            <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold mb-3 text-sm">
+              01
+            </div>
+            <h3 className="text-base font-semibold text-white mb-1.5">Automated Billing Runs</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Deterministic period calculation, unique constraint duplicate prevention, and automated invoice creation.
             </p>
           </div>
-          <div className="mt-6 flex items-center text-sm font-semibold text-[#4F46E5] group-hover:gap-2 transition-all">
-            <span>Enter Admin Dashboard</span>
-            <ArrowRight className="h-4 w-4 ml-1" />
-          </div>
-        </Link>
 
-        {/* Staff Card */}
-        <Link
-          href="/staff/dashboard"
-          className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-xs hover:border-[#4F46E5] hover:shadow-md transition-all"
-        >
-          <div className="space-y-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-              <Users className="h-6 w-6" />
+          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60">
+            <div className="w-9 h-9 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold mb-3 text-sm">
+              02
             </div>
-            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors">
-              Staff Portal
-            </h2>
-            <p className="text-sm text-slate-500">
-              Operational execution: customer management, quotation generation, subscription lifecycle, and manual payments.
+            <h3 className="text-base font-semibold text-white mb-1.5">Quotation to Subscription</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Seamlessly transition custom customer quotes into active recurring subscriptions with snapshot pricing.
             </p>
           </div>
-          <div className="mt-6 flex items-center text-sm font-semibold text-[#4F46E5] group-hover:gap-2 transition-all">
-            <span>Enter Staff Dashboard</span>
-            <ArrowRight className="h-4 w-4 ml-1" />
-          </div>
-        </Link>
 
-        {/* Customer Card */}
-        <Link
-          href="/portal"
-          className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-xs hover:border-[#4F46E5] hover:shadow-md transition-all"
-        >
-          <div className="space-y-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-              <User className="h-6 w-6" />
+          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60">
+            <div className="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold mb-3 text-sm">
+              03
             </div>
-            <h2 className="text-xl font-bold text-slate-900 group-hover:text-[#4F46E5] transition-colors">
-              Customer Portal
-            </h2>
-            <p className="text-sm text-slate-500">
-              Customer self-service: strictly isolated view of active subscriptions, invoices, and payments.
+            <h3 className="text-base font-semibold text-white mb-1.5">Customer Isolation</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              PostgreSQL Row Level Security ensures customers only ever view their own subscriptions and payments.
             </p>
           </div>
-          <div className="mt-6 flex items-center text-sm font-semibold text-[#4F46E5] group-hover:gap-2 transition-all">
-            <span>Enter Customer View</span>
-            <ArrowRight className="h-4 w-4 ml-1" />
-          </div>
-        </Link>
-      </div>
+        </div>
+      </section>
 
-      <div className="mt-12 text-center text-xs text-slate-400">
-        BrightLoop Subscription OS • Single-Company Architecture Baseline • Team Member 2 (UI/UX)
-      </div>
-    </div>
+      {/* Footer */}
+      <footer className="border-t border-slate-800/80 py-6 px-6 text-center text-xs text-slate-500">
+        BrightLoop Subscription Management System &bull; Single-Company Architecture &bull; Odoo x Make-A-Ton 9.0 Kochi Hackathon
+      </footer>
+    </main>
   );
 }
