@@ -84,7 +84,11 @@ export default function LoginPage() {
               />
             </FormField>
 
-            <FormField label="Password" required>
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-[#211b15]">Password *</label>
+                <Link href="/auth/reset-password" className="text-[11px] text-[#8c591b] hover:underline font-medium">Forgot password?</Link>
+              </div>
               <Input
                 type="password"
                 placeholder="••••••••••••"
@@ -93,7 +97,7 @@ export default function LoginPage() {
                 leftIcon={<Lock className="h-4 w-4" />}
                 required
               />
-            </FormField>
+            </div>
 
             {/* Role detection indicator */}
             <div className="rounded-[3.75px] bg-[#fcfaf1] border border-[#efe9e0] p-3 text-xs text-[#50463c] flex items-center justify-between">
