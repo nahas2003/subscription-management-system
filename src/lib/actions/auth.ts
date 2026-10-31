@@ -3,15 +3,16 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { Profile } from '@/types/database';
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  const redirectTo = (formData.get('redirectTo') as string) || '/dashboard';
+  const redirectTo = (formData.get('redirectTo') as string) || '';
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -20,8 +21,31 @@ export async function login(formData: FormData) {
     return { error: error.message };
   }
 
+  // Fetch user role to determine smart redirect
+  if (data.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    revalidatePath('/', 'layout');
+
+    if (redirectTo) {
+      redirect(redirectTo);
+    }
+
+    if (profile?.role === 'admin') {
+      redirect('/admin/dashboard');
+    } else if (profile?.role === 'staff') {
+      redirect('/staff/dashboard');
+    } else {
+      redirect('/portal');
+    }
+  }
+
   revalidatePath('/', 'layout');
-  redirect(redirectTo);
+  redirect('/portal');
 }
 
 export async function signupCustomer(formData: FormData) {
@@ -30,7 +54,7 @@ export async function signupCustomer(formData: FormData) {
   const fullName = formData.get('fullName') as string;
   const phone = (formData.get('phone') as string) || null;
 
-  const supabase = await createClient();
+  const supabase = createClient();
 
   // Create auth account
   const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -82,14 +106,14 @@ export async function signupCustomer(formData: FormData) {
 }
 
 export async function logout() {
-  const supabase = await createClient();
+  const supabase = createClient();
   await supabase.auth.signOut();
   revalidatePath('/', 'layout');
   redirect('/auth/login');
 }
 
 export async function getCurrentUser() {
-  const supabase = await createClient();
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -104,6 +128,92 @@ export async function getCurrentUser() {
 
   return {
     user,
-    profile,
+    profile: profile as Profile | null,
   };
+}
+
+/**
+ * Admin-Only Action: Provision a new staff member account.
+ * Document Reference: docs/04_Database_API_Contract.md Section 13.2
+ */
+export async function createStaff(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  const fullName = formData.get('fullName') as string;
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const role = (formData.get('role') as string) || 'staff';
+
+  if (!fullName || !email || !password) {
+    return { error: 'Full name, email, and password are required.' };
+  }
+
+  const supabase = createClient();
+
+  // 1. Enforce that caller is an Admin
+  const {
+    data: { user: caller },
+  } = await supabase.auth.getUser();
+
+  if (!caller) {
+    return { error: 'Authentication required' };
+  }
+
+  const { data: callerProfile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', caller.id)
+    .single();
+
+  if (callerProfile?.role !== 'admin') {
+    return { error: 'Access denied: Only Admin accounts can create staff.' };
+  }
+
+  // 2. Create the user in Supabase Auth
+  const { data: newUserData, error: createError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        role: role === 'admin' ? 'admin' : 'staff',
+      },
+    },
+  });
+
+  if (createError) {
+    return { error: createError.message };
+  }
+
+  if (newUserData.user) {
+    // 3. Upsert into public.profiles
+    const { error: profileError } = await supabase.from('profiles').upsert({
+      id: newUserData.user.id,
+      email,
+      full_name: fullName,
+      role: role === 'admin' ? 'admin' : 'staff',
+      customer_id: null,
+      is_active: true,
+    });
+
+    if (profileError) {
+      return { error: profileError.message };
+    }
+  }
+
+  revalidatePath('/admin/staff');
+  return { success: true };
+}
+
+/**
+ * Fetch all staff and admin accounts for management table.
+ */
+export async function getStaffList(): Promise<Profile[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .in('role', ['admin', 'staff'])
+    .order('created_at', { ascending: false });
+
+  if (error || !data) return [];
+  return data as Profile[];
 }
