@@ -8,7 +8,7 @@ import { paymentRepository } from '@/features/payments/payment-repository';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { NextResponse } from 'next/server';
 
-export async function handleGetCustomerPayments(authenticatedCustomerId: string) {
+async function handleGetCustomerPayments(authenticatedCustomerId: string) {
   try {
     if (!authenticatedCustomerId) {
       return errorResponse('Authentication required. Customer identity missing.', 'UNAUTHORIZED');
