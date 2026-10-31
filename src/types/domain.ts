@@ -31,7 +31,7 @@ import {
 
 export type { PlanFrequency };
 
-export type QuotationDomainStatus =
+export type QuotationStatus =
   | 'draft'
   | 'sent'
   | 'accepted'
@@ -39,11 +39,12 @@ export type QuotationDomainStatus =
   | 'expired'
   | 'converted';
 
-export type SubscriptionDomainStatus =
+export type SubscriptionStatus =
   | 'draft'
   | 'quotation'
   | 'confirmed'
   | 'active'
+  | 'paused'
   | 'closed';
 
 export interface AuthUser {
@@ -114,12 +115,13 @@ export interface DashboardMetrics {
 
 // Lifecycle transition validation
 export const ALLOWED_SUBSCRIPTION_TRANSITIONS: Record<
-  SubscriptionDomainStatus,
-  SubscriptionDomainStatus[]
+  SubscriptionStatus,
+  SubscriptionStatus[]
 > = {
   draft: ['quotation', 'closed'],
   quotation: ['confirmed', 'closed'],
   confirmed: ['active', 'closed'],
-  active: ['closed'],
+  active: ['paused', 'closed'],
+  paused: ['active', 'closed'],
   closed: [], // Terminal status
 };

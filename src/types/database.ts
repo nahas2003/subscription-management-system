@@ -260,7 +260,7 @@ export interface SubscriptionRow {
   expiry_date: string | null;
   next_billing_date: string | null;
   payment_terms: string;
-  status: 'draft' | 'quotation' | 'confirmed' | 'active' | 'closed';
+  status: 'draft' | 'quotation' | 'confirmed' | 'active' | 'paused' | 'closed';
   is_paused: boolean;
   created_at: string;
   updated_at: string;

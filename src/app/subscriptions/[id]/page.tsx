@@ -173,12 +173,12 @@ export default function SubscriptionDetailPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
           <div className="text-xs text-slate-500">
             {allowedNext.length > 0
-              ? `Allowed state transitions: ${allowedNext.map((s) => `"${s.toUpperCase()}"`).join(', ')}`
+              ? `Allowed state transitions: ${allowedNext.map((s: string) => `"${s.toUpperCase()}"`).join(', ')}`
               : 'This subscription is in the terminal "CLOSED" state. No future recurring invoices will be produced.'}
           </div>
 
           <div className="flex items-center gap-2">
-            {allowedNext.map((nextStage) => (
+            {allowedNext.map((nextStage: SubscriptionStatus) => (
               <button
                 key={nextStage}
                 onClick={() => handleTransition(nextStage)}
