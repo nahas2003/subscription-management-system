@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ShieldCheck, Users, User, ArrowRight, Lock } from 'lucide-react';
+import { Layers, ShieldCheck, Users, User, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   return (
