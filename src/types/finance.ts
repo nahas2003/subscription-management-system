@@ -63,7 +63,7 @@ export type DiscountScope = 'subscription' | 'product' | 'global';
 export interface Discount {
   id: string;
   name: string;
-  code?: string;
+  code?: string | null;
   discount_type: DiscountType;
   value: number; // Amount in INR or percentage 0-100
   minimum_purchase: number | null; // INR threshold
