@@ -2,26 +2,22 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // Graceful fallback for local frontend development:
-  // If Supabase environment variables are missing or placeholders, bypass middleware
-  // so the frontend UI and mock authentication work seamlessly without crashing.
-  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes('your-project-id')) {
-    return NextResponse.next({
-      request,
-    });
-  }
-
   let supabaseResponse = NextResponse.next({
     request,
   });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // If Supabase environment variables are missing or unconfigured placeholders, bypass to allow local prototyping
+  if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('your-project-id') || supabaseUrl.includes('placeholder')) {
+    return supabaseResponse;
+  }
+
   try {
     const supabase = createServerClient(
       supabaseUrl,
-      supabaseAnonKey,
+      supabaseKey,
       {
         cookies: {
           getAll() {
@@ -59,7 +55,6 @@ export async function updateSession(request: NextRequest) {
       path.includes('.');
 
     if (!user && !isPublicPath) {
-      // In local dev without active Supabase session, do not lock out demo role pages
       return supabaseResponse;
     }
 
