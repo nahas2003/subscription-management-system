@@ -451,7 +451,15 @@ class SubscriptionStore {
   }
 
   getSubscriptionById(id: string): SubscriptionWithDetails | undefined {
-    const s = this.subscriptions.find((item) => item.id === id);
+    const s = this.subscriptions.find(
+      (item) =>
+        item.id === id ||
+        item.id === id.replace('sub-0', 'sub-00') ||
+        item.id === id.replace('sub-00', 'sub-0') ||
+        item.subscription_number.toLowerCase() === id.toLowerCase() ||
+        item.subscription_number.replace('-0', '-00').toLowerCase() === id.toLowerCase() ||
+        item.subscription_number.replace('-00', '-0').toLowerCase() === id.toLowerCase()
+    );
     if (!s) return undefined;
     return {
       ...s,
@@ -525,7 +533,15 @@ class SubscriptionStore {
   }
 
   getSubscriptionEvents(subscriptionId: string): SubscriptionEvent[] {
-    return this.events.filter((e) => e.subscription_id === subscriptionId);
+    const sub = this.getSubscriptionById(subscriptionId);
+    const targetId = sub?.id || subscriptionId;
+    return this.events.filter(
+      (e) =>
+        e.subscription_id === targetId ||
+        e.subscription_id === subscriptionId ||
+        e.subscription_id === subscriptionId.replace('sub-0', 'sub-00') ||
+        e.subscription_id === subscriptionId.replace('sub-00', 'sub-0')
+    );
   }
 }
 

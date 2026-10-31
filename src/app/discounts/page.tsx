@@ -1,3 +1,4 @@
+import { AppShell } from '@/components/layout/AppShell';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -88,7 +89,8 @@ export default function DiscountsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <AppShell role="admin" currentPath="/discounts" user={{ name: 'Admin Operations', email: 'admin@brightloop.in', role: 'admin' }} title="Discounts & Promotions">
+      <div className="space-y-6">
       <PageHeader
         title="Promotional Discounts & Tax Engine"
         description="Configure fixed and percentage promotional rules, minimum spend thresholds, usage quotas, and statutory 18% GST rules (Member 4 — Task M4-03)."
@@ -306,5 +308,6 @@ export default function DiscountsPage() {
         </div>
       )}
     </div>
+    </AppShell>
   );
 }

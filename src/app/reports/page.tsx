@@ -1,3 +1,4 @@
+import { AppShell } from '@/components/layout/AppShell';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -82,7 +83,8 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <AppShell role="admin" currentPath="/reports" user={{ name: 'Admin Operations', email: 'admin@brightloop.in', role: 'admin' }} title="Finance Reports">
+      <div className="space-y-6">
       <PageHeader
         title="Financial Reports & Analytics"
         description="Cash collections vs. invoiced billing reconciliation, outstanding debt tracking, and automated billing runs (Member 4 — Task M4-05)."
@@ -132,5 +134,6 @@ export default function ReportsPage() {
         onFilterChange={loadData}
       />
     </div>
+    </AppShell>
   );
 }

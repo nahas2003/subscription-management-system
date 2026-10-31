@@ -20,7 +20,7 @@ export async function requireRole(allowedRoles: UserRole[]): Promise<AuthContext
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/auth/login');
+    redirect('/login');
   }
 
   const { data: profile, error } = await supabase
@@ -30,7 +30,7 @@ export async function requireRole(allowedRoles: UserRole[]): Promise<AuthContext
     .single();
 
   if (error || !profile || !profile.is_active) {
-    redirect('/auth/login?error=account_inactive');
+    redirect('/login?error=account_inactive');
   }
 
   if (!allowedRoles.includes(profile.role as UserRole)) {

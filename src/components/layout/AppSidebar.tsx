@@ -109,6 +109,13 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             { label: 'Payments', href: '/staff/payments', icon: CreditCard },
           ],
         },
+        {
+          title: 'Catalogue & Plans',
+          items: [
+            { label: 'Products', href: '/products', icon: Package },
+            { label: 'Plans', href: '/plans', icon: Calendar },
+          ],
+        },
       ];
     }
 
@@ -189,8 +196,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                 </div>
               )}
               {section.items.map((item) => {
+                const normalizedCurrent = currentPath.replace(/^\/(admin|staff)/, '');
+                const normalizedItem = item.href.replace(/^\/(admin|staff)/, '');
                 const isActive =
                   currentPath === item.href ||
+                  (normalizedCurrent.length > 1 && normalizedCurrent === normalizedItem) ||
                   (item.href !== '/portal' && item.href !== '/admin/dashboard' && item.href !== '/staff/dashboard' && currentPath.startsWith(item.href));
                 const Icon = item.icon;
 

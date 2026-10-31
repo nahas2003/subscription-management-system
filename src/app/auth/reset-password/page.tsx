@@ -1,8 +1,12 @@
 'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import { resetPassword } from "@/lib/actions/auth";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { Layers, ArrowLeft, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { FormField } from '@/components/ui/FormField';
+import { resetPassword } from '@/lib/actions/auth';
 
 export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
@@ -20,66 +24,99 @@ export default function ResetPasswordPage() {
     if (result?.error) {
       setError(result.error);
     } else {
-      setSuccess("Password reset email sent! Check your inbox for instructions.");
+      setSuccess('Password recovery email sent! Check your inbox for reset instructions.');
     }
     setLoading(false);
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xl mx-auto mb-4 shadow-lg shadow-blue-500/20">
-            B
+    <div className="min-h-screen bg-[#fcfaf1] text-[#211b15] font-sans flex flex-col justify-between">
+      {/* Header */}
+      <header className="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[3.75px] bg-[#252a23] text-[#e8b672] shadow-sm">
+            <Layers className="h-5 w-5" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Reset Password</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Enter your account email to receive a password recovery link
-          </p>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm">
-            {success}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-              Account Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="user@example.com"
-              className="w-full px-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
-            />
+            <span className="font-display text-xl font-bold tracking-tight text-[#211b15]">
+              BRIGHT<span className="text-[#8c591b]">LOOP</span>
+            </span>
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-[#96897b]">
+              Subscription OS
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8c591b] hover:underline"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to Sign In</span>
+        </Link>
+      </header>
+
+      {/* Main Card */}
+      <main className="max-w-md w-full mx-auto px-4 py-8">
+        <div className="rounded-[7.5px] border border-[#efe9e0] bg-white p-6 sm:p-8 shadow-ambrook-card space-y-6">
+          <div className="text-center space-y-1">
+            <h1 className="font-display text-3xl font-bold text-[#211b15]">Reset Password</h1>
+            <p className="text-xs text-[#50463c]">
+              Enter your corporate email address to receive secure recovery instructions.
+            </p>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium rounded-xl transition-all shadow-md shadow-blue-600/20"
-          >
-            {loading ? "Sending link..." : "Send Reset Link"}
-          </button>
-        </form>
+          {error && (
+            <div className="rounded-[3.75px] bg-red-50 border border-red-200 p-3 text-xs text-red-700 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+              <span>{error}</span>
+            </div>
+          )}
 
-        <div className="mt-6 pt-6 border-t border-slate-800 text-center text-xs text-slate-400">
-          Remembered your password?{" "}
-          <Link href="/auth/login" className="text-blue-400 hover:underline">
-            Back to Sign In
-          </Link>
+          {success && (
+            <div className="rounded-[3.75px] bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+              <span>{success}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <FormField label="Registered Email Address" required>
+              <Input
+                type="email"
+                name="email"
+                placeholder="you@company.in"
+                leftIcon={<Mail className="h-4 w-4" />}
+                required
+              />
+            </FormField>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              fullWidth
+              isLoading={loading}
+            >
+              Send Recovery Link
+            </Button>
+          </form>
+
+          <div className="text-center pt-2 border-t border-[#efe9e0]">
+            <Link
+              href="/login"
+              className="text-xs text-[#50463c] hover:text-[#211b15] font-medium"
+            >
+              Remember your password? <strong className="text-[#8c591b]">Sign in here</strong>
+            </Link>
+          </div>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full text-center py-6 text-xs text-[#96897b]">
+        BrightLoop Subscription Management • Odoo x Make-A-Ton 9.0
+      </footer>
     </div>
   );
 }

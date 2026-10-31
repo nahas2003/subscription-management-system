@@ -1,3 +1,4 @@
+import { AppShell } from '@/components/layout/AppShell';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -94,7 +95,8 @@ export default function PaymentsPage() {
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="space-y-6">
+    <AppShell role="admin" currentPath="/payments" user={{ name: 'Admin Operations', email: 'admin@brightloop.in', role: 'admin' }} title="Payments & Ledger">
+      <div className="space-y-6">
       <PageHeader
         title="Payment Recording & Ledger"
         description="Manual payment recording, transaction reconciliation, payment allocations, and real-time outstanding balance settlement (Member 4 — Task M4-04)."
@@ -233,5 +235,6 @@ export default function PaymentsPage() {
       {/* Payments Table */}
       <PaymentsTable payments={payments} isLoading={isLoading} />
     </div>
+    </AppShell>
   );
 }

@@ -1,8 +1,8 @@
-# Documentation - local reference only, do not track in git
+# Documentation - internal docs local only
 docs/
 doc/
-README.md
 *.md
+!README.md
 
 # Dependencies
 node_modules/
@@ -44,8 +44,3 @@ Thumbs.db
 # Local cache
 *.tsbuildinfo
 next-env.d.ts
-
-# Documentation & Markdown files - Keep local only, do not push
-doc/
-docs/
-*.md

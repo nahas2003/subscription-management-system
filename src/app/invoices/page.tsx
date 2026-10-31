@@ -1,3 +1,4 @@
+import { AppShell } from '@/components/layout/AppShell';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -179,7 +180,8 @@ export default function InvoicesPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <AppShell role="admin" currentPath="/invoices" user={{ name: 'Admin Operations', email: 'admin@brightloop.in', role: 'admin' }} title="Invoices & Billing">
+      <div className="space-y-6">
       <PageHeader
         title="Invoices & Billing"
         description="Invoice lifecycle management (Draft → Confirmed → Paid), 18% GST tax calculation, payment settlement, and automated recurring billing runs (Member 4 — Task M4-01 & M4-02)."
@@ -327,5 +329,6 @@ export default function InvoicesPage() {
         </div>
       )}
     </div>
+    </AppShell>
   );
 }
