@@ -1,12 +1,15 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
+import { Button } from '@/components/ui/Button';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { StatusBadge, SubscriptionStatus } from '@/components/ui/StatusBadge';
+import { Plus, Eye } from 'lucide-react';
 
 interface StaffSubscription {
   id: string;
@@ -78,6 +81,18 @@ export default function StaffSubscriptionsPage() {
       header: 'Status',
       cell: (item) => <StatusBadge status={item.status} size="sm" />,
     },
+    {
+      header: 'Actions',
+      cell: (item) => (
+        <Link
+          href={`/subscriptions/${item.id}`}
+          className="p-1 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors inline-block"
+          title="Manage Lifecycle"
+        >
+          <Eye className="h-4 w-4" />
+        </Link>
+      ),
+    },
   ];
 
   return (
@@ -90,7 +105,14 @@ export default function StaffSubscriptionsPage() {
       <div className="space-y-6">
         <PageHeader
           title="Subscriptions"
-          description="Operational subscription lifecycle monitoring."
+          description="Operational subscription lifecycle monitoring (Task M3-05)."
+          action={
+            <Link href="/quotations/new">
+              <Button variant="primary" size="md" leftIcon={<Plus className="h-4 w-4" />}>
+                New via Quotation
+              </Button>
+            </Link>
+          }
         />
 
         <DataTable
