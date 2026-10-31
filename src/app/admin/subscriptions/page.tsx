@@ -21,7 +21,7 @@ interface SubscriptionRecord {
   planFrequency: string;
   recurringAmount: number;
   startDate: string;
-  nextRenewal: string;
+  nextRenewal: string | null;
   status: SubscriptionStatus | string;
 }
 
