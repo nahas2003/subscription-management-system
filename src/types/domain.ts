@@ -125,3 +125,6 @@ export const ALLOWED_SUBSCRIPTION_TRANSITIONS: Record<
   paused: ['active', 'closed'],
   closed: [], // Terminal status
 };
+
+export type { SubscriptionEvent } from './database';
+

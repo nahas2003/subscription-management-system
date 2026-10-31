@@ -10,6 +10,7 @@ import {
   QuotationLineRow,
   SubscriptionRow,
   SubscriptionLineRow,
+  SubscriptionEvent,
 } from '@/types/database';
 
 import {
@@ -42,6 +43,38 @@ class SubscriptionStore {
   private quotationLines: QuotationLineRow[] = [...INITIAL_QUOTATION_LINES];
   private subscriptions: SubscriptionRow[] = [...INITIAL_SUBSCRIPTIONS];
   private subscriptionLines: SubscriptionLineRow[] = [...INITIAL_SUBSCRIPTION_LINES];
+  private events: SubscriptionEvent[] = [
+    {
+      id: 'evt-01',
+      subscription_id: 'sub-01',
+      actor_name: 'Operations Staff',
+      event_type: 'creation',
+      from_status: null,
+      to_status: 'draft',
+      notes: 'Subscription draft generated from accepted quotation QUO-2026-0001',
+      created_at: '2026-01-15T09:00:00Z',
+    },
+    {
+      id: 'evt-02',
+      subscription_id: 'sub-01',
+      actor_name: 'Operations Staff',
+      event_type: 'activation',
+      from_status: 'confirmed',
+      to_status: 'active',
+      notes: 'Initial billing run processed and subscription activated',
+      created_at: '2026-01-15T10:30:00Z',
+    },
+    {
+      id: 'evt-03',
+      subscription_id: 'sub-02',
+      actor_name: 'System Admin',
+      event_type: 'activation',
+      from_status: 'confirmed',
+      to_status: 'active',
+      notes: 'Cloud SLA contract confirmed and activated',
+      created_at: '2026-10-01T08:00:00Z',
+    },
+  ];
 
   // ===================== CUSTOMERS =====================
   getCustomers(): CustomerRow[] {
@@ -122,6 +155,7 @@ class SubscriptionStore {
       cost_price?: number | null;
       description?: string | null;
       notes?: string | null;
+      is_active?: boolean;
     },
     variantsData: { name: string; price_adjustment: number }[] = []
   ): ProductWithVariants {
@@ -140,7 +174,7 @@ class SubscriptionStore {
       cost_price: productData.cost_price ?? null,
       description: productData.description || null,
       notes: productData.notes || null,
-      is_active: true,
+      is_active: productData.is_active ?? true,
       created_at: now,
       updated_at: now,
     };
@@ -235,7 +269,7 @@ class SubscriptionStore {
 
   createQuotation(data: {
     customer_id: string;
-    valid_until: string;
+    valid_until?: string;
     notes?: string;
     lines: {
       product_id?: string;
@@ -244,7 +278,7 @@ class SubscriptionStore {
       description: string;
       quantity: number;
       unit_price: number;
-      tax_rate: number;
+      tax_rate?: number;
     }[];
   }): QuotationWithLines {
     if (!data.lines || data.lines.length === 0) {
@@ -255,13 +289,15 @@ class SubscriptionStore {
     const now = new Date().toISOString();
     const today = now.split('T')[0];
     const quotationId = `quo-${Date.now()}`;
+    const validUntil = data.valid_until || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
 
     let subtotal = 0;
     let taxTotal = 0;
 
     const createdLines: QuotationLineRow[] = data.lines.map((item, idx) => {
+      const taxRate = item.tax_rate !== undefined ? item.tax_rate : 0.18;
       const lineSubtotal = Math.round(item.quantity * item.unit_price * 100) / 100;
-      const lineTax = Math.round(lineSubtotal * item.tax_rate * 100) / 100;
+      const lineTax = Math.round(lineSubtotal * taxRate * 100) / 100;
       const lineTotal = Math.round((lineSubtotal + lineTax) * 100) / 100;
 
       subtotal += lineSubtotal;
@@ -276,7 +312,7 @@ class SubscriptionStore {
         description_snapshot: item.description,
         quantity: item.quantity,
         unit_price: item.unit_price,
-        tax_rate_snapshot: item.tax_rate,
+        tax_rate_snapshot: taxRate,
         line_subtotal: lineSubtotal,
         line_tax: lineTax,
         line_total: lineTotal,
@@ -293,7 +329,7 @@ class SubscriptionStore {
       quotation_number: quotationNumber,
       customer_id: data.customer_id,
       quotation_date: today,
-      valid_until: data.valid_until,
+      valid_until: validUntil,
       status: 'draft',
       subtotal: subtotal,
       discount_total: 0,
@@ -384,6 +420,18 @@ class SubscriptionStore {
     quotation.status = 'converted';
     quotation.updated_at = now;
 
+    // Log lifecycle event
+    this.events.unshift({
+      id: `evt-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      subscription_id: subId,
+      actor_name: 'Operations Staff',
+      event_type: 'quotation_converted',
+      from_status: 'quotation',
+      to_status: 'confirmed',
+      notes: `Converted from accepted quotation ${quotation.quotation_number}`,
+      created_at: now,
+    });
+
     return {
       ...newSub,
       customer: this.customers.find((c) => c.id === newSub.customer_id),
@@ -415,7 +463,8 @@ class SubscriptionStore {
 
   transitionSubscriptionStatus(
     id: string,
-    newStatus: SubscriptionStatus
+    newStatus: SubscriptionStatus,
+    notes?: string
   ): { success: boolean; subscription?: SubscriptionWithDetails; error?: string } {
     const sub = this.subscriptions.find((s) => s.id === id);
     if (!sub) return { success: false, error: `Subscription ${id} not found.` };
@@ -428,8 +477,21 @@ class SubscriptionStore {
       };
     }
 
+    const oldStatus = sub.status;
     sub.status = newStatus;
     sub.updated_at = new Date().toISOString();
+
+    // Log lifecycle event
+    this.events.unshift({
+      id: `evt-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      subscription_id: id,
+      actor_name: 'Operations Staff',
+      event_type: 'status_transition',
+      from_status: oldStatus,
+      to_status: newStatus,
+      notes: notes || `Transitioned status from ${oldStatus} to ${newStatus}`,
+      created_at: new Date().toISOString(),
+    });
 
     return {
       success: true,
@@ -447,7 +509,23 @@ class SubscriptionStore {
 
     sub.is_paused = !sub.is_paused;
     sub.updated_at = new Date().toISOString();
+
+    this.events.unshift({
+      id: `evt-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      subscription_id: id,
+      actor_name: 'Operations Staff',
+      event_type: sub.is_paused ? 'paused' : 'resumed',
+      from_status: 'active',
+      to_status: sub.is_paused ? 'paused' : 'active',
+      notes: sub.is_paused ? 'Subscription service paused temporarily' : 'Subscription service resumed',
+      created_at: new Date().toISOString(),
+    });
+
     return { success: true, is_paused: sub.is_paused };
+  }
+
+  getSubscriptionEvents(subscriptionId: string): SubscriptionEvent[] {
+    return this.events.filter((e) => e.subscription_id === subscriptionId);
   }
 }
 

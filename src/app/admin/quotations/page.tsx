@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -8,98 +9,107 @@ import { Button } from '@/components/ui/Button';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, FileText, CheckCircle2 } from 'lucide-react';
+import { QuotationStatus } from '@/types/domain';
+import { Plus, Eye } from 'lucide-react';
 
 interface QuotationRecord {
   id: string;
   quotationNumber: string;
   customerName: string;
-  planName: string;
-  createdAt: string;
+  totalAmount: number;
+  quotationDate: string;
   validUntil: string;
-  subtotal: number;
-  taxAmount: number;
-  total: number;
-  status: 'Draft' | 'Quotation' | 'Confirmed';
+  status: QuotationStatus | string;
+  linesCount: number;
 }
 
 const mockQuotations: QuotationRecord[] = [
   {
     id: 'quo-01',
-    quotationNumber: 'QUO-2026-0031',
-    customerName: 'Cochin Tech Solutions',
-    planName: 'Enterprise Annual License',
-    createdAt: '2026-10-20',
-    validUntil: '2026-11-05',
-    subtotal: 100000,
-    taxAmount: 18000,
-    total: 118000,
-    status: 'Quotation',
+    quotationNumber: 'QUO-2026-0001',
+    customerName: 'Apex Technologies Pvt Ltd',
+    totalAmount: 118000,
+    quotationDate: '2026-01-10',
+    validUntil: '2026-02-10',
+    status: 'converted',
+    linesCount: 2,
   },
   {
     id: 'quo-02',
-    quotationNumber: 'QUO-2026-0028',
-    customerName: 'Apex Technologies Pvt Ltd',
-    planName: 'Pro Monthly Support Plan',
-    createdAt: '2026-09-15',
-    validUntil: '2026-09-30',
-    subtotal: 15000,
-    taxAmount: 2700,
-    total: 17700,
-    status: 'Confirmed',
+    quotationNumber: 'QUO-2026-0012',
+    customerName: 'Kochi Logistics Hub',
+    totalAmount: 28320,
+    quotationDate: '2026-02-10',
+    validUntil: '2026-03-10',
+    status: 'confirmed',
+    linesCount: 1,
   },
   {
     id: 'quo-03',
-    quotationNumber: 'QUO-2026-0035',
-    customerName: 'Kerala Spice Exporters',
-    planName: 'Quality Management System',
-    createdAt: '2026-10-30',
-    validUntil: '2026-11-15',
-    subtotal: 100000,
-    taxAmount: 18000,
-    total: 118000,
-    status: 'Draft',
+    quotationNumber: 'QUO-2026-0018',
+    customerName: 'Malabar Retailers Ltd',
+    totalAmount: 35400,
+    quotationDate: '2026-02-28',
+    validUntil: '2026-03-28',
+    status: 'sent',
+    linesCount: 3,
+  },
+  {
+    id: 'quo-04',
+    quotationNumber: 'QUO-2026-0021',
+    customerName: 'Travancore Analytics',
+    totalAmount: 59000,
+    quotationDate: '2026-03-01',
+    validUntil: '2026-04-01',
+    status: 'draft',
+    linesCount: 1,
   },
 ];
 
 export default function QuotationsPage() {
   const columns: Column<QuotationRecord>[] = [
     {
-      header: 'Quotation #',
+      header: 'Quote #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-semibold text-slate-800">
           {item.quotationNumber}
         </span>
       ),
     },
     {
       header: 'Customer',
-      cell: (item) => (
-        <div>
-          <div className="font-semibold text-slate-900">{item.customerName}</div>
-          <div className="text-xs text-slate-500">{item.planName}</div>
-        </div>
-      ),
+      accessorKey: 'customerName',
+      className: 'font-semibold text-slate-800',
     },
     {
-      header: 'Created On',
-      cell: (item) => <DateDisplay date={item.createdAt} />,
+      header: 'Total (inc. GST)',
+      cell: (item) => <MoneyDisplay amount={item.totalAmount} size="sm" className="font-semibold" />,
+    },
+    {
+      header: 'Date',
+      cell: (item) => <DateDisplay date={item.quotationDate} />,
     },
     {
       header: 'Valid Until',
       cell: (item) => <DateDisplay date={item.validUntil} />,
     },
     {
-      header: 'Tax (18%)',
-      cell: (item) => <MoneyDisplay amount={item.taxAmount} size="sm" />,
-    },
-    {
-      header: 'Total Value',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
-    },
-    {
       header: 'Status',
       cell: (item) => <StatusBadge status={item.status} size="sm" />,
+    },
+    {
+      header: 'Actions',
+      cell: (item) => (
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/quotations"
+            className="p-1 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors"
+            title="Inspect Quotations"
+          >
+            <Eye className="h-4 w-4" />
+          </Link>
+        </div>
+      ),
     },
   ];
 
@@ -108,20 +118,22 @@ export default function QuotationsPage() {
       role="admin"
       currentPath="/admin/quotations"
       user={{ name: 'System Admin', email: 'admin@brightloop.in', role: 'admin' }}
-      title="Quotations Management"
+      title="Quotations"
     >
       <div className="space-y-6">
         <PageHeader
           title="Customer Quotations"
-          description="Prepare, send, and confirm subscription quotations following the Draft → Quotation → Confirmed workflow."
+          description="Prepare, send, and confirm subscription quotations following the Draft → Quotation → Confirmed workflow (Task M3-04)."
           action={
-            <Button
-              variant="primary"
-              size="md"
-              leftIcon={<Plus className="h-4 w-4" />}
-            >
-              Draft Quotation
-            </Button>
+            <Link href="/quotations/new">
+              <Button
+                variant="primary"
+                size="md"
+                leftIcon={<Plus className="h-4 w-4" />}
+              >
+                Draft Quotation
+              </Button>
+            </Link>
           }
         />
 

@@ -1,26 +1,27 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { Button } from '@/components/ui/Button';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge, SubscriptionStatus } from '@/components/ui/StatusBadge';
-import { Plus, Repeat, ArrowRight } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { SubscriptionStatus } from '@/types/domain';
+import { Plus, Eye } from 'lucide-react';
 
 interface SubscriptionRecord {
   id: string;
   subscriptionNumber: string;
   customerName: string;
   productName: string;
-  planName: string;
-  frequency: string;
+  planFrequency: string;
   recurringAmount: number;
   startDate: string;
   nextRenewal: string;
-  status: SubscriptionStatus;
+  status: SubscriptionStatus | string;
 }
 
 const mockSubscriptions: SubscriptionRecord[] = [
@@ -29,48 +30,44 @@ const mockSubscriptions: SubscriptionRecord[] = [
     subscriptionNumber: 'SUB-2026-0001',
     customerName: 'Apex Technologies Pvt Ltd',
     productName: 'Quality Management System',
-    planName: 'Enterprise Annual Plan',
-    frequency: 'Yearly',
+    planFrequency: 'Yearly',
     recurringAmount: 118000,
     startDate: '2026-01-15',
     nextRenewal: '2027-01-15',
-    status: 'Active',
+    status: 'active',
   },
   {
     id: 'sub-02',
     subscriptionNumber: 'SUB-2026-0014',
     customerName: 'Apex Technologies Pvt Ltd',
     productName: 'Managed Cloud Infrastructure',
-    planName: 'Pro Monthly Support',
-    frequency: 'Monthly',
+    planFrequency: 'Monthly',
     recurringAmount: 15000,
     startDate: '2026-10-01',
     nextRenewal: '2026-11-01',
-    status: 'Active',
+    status: 'active',
   },
   {
     id: 'sub-03',
-    subscriptionNumber: 'SUB-2026-0022',
+    subscriptionNumber: 'SUB-2026-0019',
     customerName: 'Kochi Logistics Hub',
-    productName: 'Fleet Tracker & Subscriptions',
-    planName: 'Standard Monthly Plan',
-    frequency: 'Monthly',
+    productName: 'Managed Cloud Infrastructure',
+    planFrequency: 'Monthly',
     recurringAmount: 24000,
-    startDate: '2026-10-10',
-    nextRenewal: '2026-11-10',
-    status: 'Confirmed',
+    startDate: '2026-02-15',
+    nextRenewal: '2026-03-15',
+    status: 'paused',
   },
   {
     id: 'sub-04',
-    subscriptionNumber: 'SUB-2025-0044',
+    subscriptionNumber: 'SUB-2026-0022',
     customerName: 'Malabar Retailers Ltd',
     productName: 'Event Management System',
-    planName: 'Event Single Pass',
-    frequency: 'Monthly',
-    recurringAmount: 8500,
-    startDate: '2025-06-01',
-    nextRenewal: '2026-06-01',
-    status: 'Closed',
+    planFrequency: 'Yearly',
+    recurringAmount: 35400,
+    startDate: '2026-03-01',
+    nextRenewal: '2027-03-01',
+    status: 'confirmed',
   },
 ];
 
@@ -86,24 +83,24 @@ export default function SubscriptionsPage() {
     },
     {
       header: 'Customer',
+      accessorKey: 'customerName',
+      className: 'font-semibold text-slate-800',
+    },
+    {
+      header: 'Product',
+      accessorKey: 'productName',
+      className: 'text-xs text-slate-600',
+    },
+    {
+      header: 'Frequency',
       cell: (item) => (
-        <div>
-          <div className="font-semibold text-slate-900">{item.customerName}</div>
-          <div className="text-xs text-slate-500">{item.productName}</div>
-        </div>
+        <span className="inline-flex rounded-md bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+          {item.planFrequency}
+        </span>
       ),
     },
     {
-      header: 'Plan / Frequency',
-      cell: (item) => (
-        <div className="text-xs">
-          <span className="text-slate-800 font-medium">{item.planName}</span>
-          <span className="block text-slate-400">({item.frequency})</span>
-        </div>
-      ),
-    },
-    {
-      header: 'Recurring',
+      header: 'Recurring (₹)',
       cell: (item) => <MoneyDisplay amount={item.recurringAmount} size="sm" className="font-semibold" />,
     },
     {
@@ -118,6 +115,18 @@ export default function SubscriptionsPage() {
       header: 'Lifecycle Status',
       cell: (item) => <StatusBadge status={item.status} size="sm" />,
     },
+    {
+      header: 'Actions',
+      cell: (item) => (
+        <Link
+          href={`/subscriptions/${item.id}`}
+          className="p-1 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors inline-block"
+          title="Manage Lifecycle"
+        >
+          <Eye className="h-4 w-4" />
+        </Link>
+      ),
+    },
   ];
 
   return (
@@ -130,15 +139,17 @@ export default function SubscriptionsPage() {
       <div className="space-y-6">
         <PageHeader
           title="Subscriptions Lifecycle"
-          description="Track recurring customer contracts through the approved lifecycle: Draft → Quotation → Confirmed → Active → Closed."
+          description="Track recurring customer contracts through the approved lifecycle: Draft → Quotation → Confirmed → Active → Closed (Task M3-05)."
           action={
-            <Button
-              variant="primary"
-              size="md"
-              leftIcon={<Plus className="h-4 w-4" />}
-            >
-              New Subscription
-            </Button>
+            <Link href="/quotations/new">
+              <Button
+                variant="primary"
+                size="md"
+                leftIcon={<Plus className="h-4 w-4" />}
+              >
+                New via Quotation
+              </Button>
+            </Link>
           }
         />
 

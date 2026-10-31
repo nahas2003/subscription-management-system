@@ -373,3 +373,15 @@ export interface Discount {
   is_active: boolean;
   created_at: string;
 }
+
+export interface SubscriptionEvent {
+  id: string;
+  subscription_id: string;
+  actor_profile_id?: string | null;
+  actor_name?: string;
+  event_type: string;
+  from_status: string | null;
+  to_status: string;
+  notes?: string | null;
+  created_at: string;
+}

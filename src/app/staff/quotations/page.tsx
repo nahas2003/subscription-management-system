@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -8,45 +9,55 @@ import { Button } from '@/components/ui/Button';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus } from 'lucide-react';
+import { QuotationStatus } from '@/types/domain';
+import { Plus, Eye } from 'lucide-react';
 
 interface StaffQuotation {
   id: string;
   quotationNumber: string;
   customerName: string;
-  createdAt: string;
+  totalAmount: number;
+  quotationDate: string;
   validUntil: string;
-  total: number;
-  status: 'Draft' | 'Quotation' | 'Confirmed';
+  status: QuotationStatus | string;
 }
 
 const mockQuotations: StaffQuotation[] = [
   {
-    id: 'q-01',
-    quotationNumber: 'QUO-2026-0031',
-    customerName: 'Cochin Tech Solutions',
-    createdAt: '2026-10-20',
-    validUntil: '2026-11-05',
-    total: 118000,
-    status: 'Quotation',
+    id: 'quo-01',
+    quotationNumber: 'QUO-2026-0001',
+    customerName: 'Apex Technologies Pvt Ltd',
+    totalAmount: 118000,
+    quotationDate: '2026-01-10',
+    validUntil: '2026-02-10',
+    status: 'converted',
   },
   {
-    id: 'q-02',
-    quotationNumber: 'QUO-2026-0034',
-    customerName: 'Kerala Spice Exporters',
-    createdAt: '2026-10-28',
-    validUntil: '2026-11-12',
-    total: 45000,
-    status: 'Draft',
+    id: 'quo-02',
+    quotationNumber: 'QUO-2026-0012',
+    customerName: 'Kochi Logistics Hub',
+    totalAmount: 28320,
+    quotationDate: '2026-02-10',
+    validUntil: '2026-03-10',
+    status: 'confirmed',
+  },
+  {
+    id: 'quo-03',
+    quotationNumber: 'QUO-2026-0018',
+    customerName: 'Malabar Retailers Ltd',
+    totalAmount: 35400,
+    quotationDate: '2026-02-28',
+    validUntil: '2026-03-28',
+    status: 'sent',
   },
 ];
 
 export default function StaffQuotationsPage() {
   const columns: Column<StaffQuotation>[] = [
     {
-      header: 'Quotation #',
+      header: 'Quote #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-semibold text-slate-800">
           {item.quotationNumber}
         </span>
       ),
@@ -57,20 +68,31 @@ export default function StaffQuotationsPage() {
       className: 'font-semibold text-slate-800',
     },
     {
-      header: 'Created On',
-      cell: (item) => <DateDisplay date={item.createdAt} />,
+      header: 'Total',
+      cell: (item) => <MoneyDisplay amount={item.totalAmount} size="sm" className="font-semibold" />,
+    },
+    {
+      header: 'Date',
+      cell: (item) => <DateDisplay date={item.quotationDate} />,
     },
     {
       header: 'Valid Until',
       cell: (item) => <DateDisplay date={item.validUntil} />,
     },
     {
-      header: 'Total Value',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
-    },
-    {
       header: 'Status',
       cell: (item) => <StatusBadge status={item.status} size="sm" />,
+    },
+    {
+      header: 'Actions',
+      cell: (item) => (
+        <Link
+          href="/quotations"
+          className="p-1 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors inline-block"
+        >
+          <Eye className="h-4 w-4" />
+        </Link>
+      ),
     },
   ];
 
@@ -84,11 +106,13 @@ export default function StaffQuotationsPage() {
       <div className="space-y-6">
         <PageHeader
           title="Quotations"
-          description="Prepare customer estimates and track client confirmation."
+          description="Prepare customer estimates and track client confirmation (Task M3-04)."
           action={
-            <Button variant="primary" size="md" leftIcon={<Plus className="h-4 w-4" />}>
-              Create Quotation
-            </Button>
+            <Link href="/quotations/new">
+              <Button variant="primary" size="md" leftIcon={<Plus className="h-4 w-4" />}>
+                Create Quotation
+              </Button>
+            </Link>
           }
         />
 
