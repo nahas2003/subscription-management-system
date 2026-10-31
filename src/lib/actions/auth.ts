@@ -217,3 +217,61 @@ export async function getStaffList(): Promise<Profile[]> {
   if (error || !data) return [];
   return data as Profile[];
 }
+
+/**
+ * Password recovery request action.
+ */
+export async function resetPassword(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  const email = formData.get('email') as string;
+  if (!email) return { error: 'Email is required' };
+
+  const supabase = createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password`,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+  return { success: true };
+}
+
+/**
+ * Customer Self-Service Profile Update Action.
+ * Restricts updates strictly to the authenticated customer's own record.
+ */
+export async function updateCustomerProfile(formData: FormData): Promise<{ success?: boolean; error?: string }> {
+  const phone = formData.get('phone') as string;
+  const billingAddress = formData.get('billingAddress') as string;
+
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: 'Authentication required' };
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('customer_id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile?.customer_id) {
+    return { error: 'No linked customer record found' };
+  }
+
+  const { error } = await supabase
+    .from('customers')
+    .update({
+      phone: phone || null,
+      billing_address: billingAddress || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', profile.customer_id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath('/portal/profile');
+  return { success: true };
+}
