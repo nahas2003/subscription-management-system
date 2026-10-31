@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ShieldCheck, Users, User, ArrowRight } from 'lucide-react';
+import { Layers, ShieldCheck, Users, User, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -15,6 +15,30 @@ export default function HomePage() {
             <span className="font-semibold text-lg tracking-tight">BrightLoop</span>
           </div>
           <div className="flex items-center gap-4">
+            <Link
+              href="/subscriptions"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Subscriptions
+            </Link>
+            <Link
+              href="/quotations"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden sm:inline-block"
+            >
+              Quotations
+            </Link>
+            <Link
+              href="/customers"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden md:inline-block"
+            >
+              Customers
+            </Link>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors hidden md:inline-block"
+            >
+              Products
+            </Link>
             <Link
               href="/auth/login"
               className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
@@ -32,9 +56,10 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-5xl mx-auto px-6 py-16 text-center">
+      <section className="max-w-6xl mx-auto px-6 py-16 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-6">
-          <span>Odoo x Make-A-Ton 9.0 Hackathon 2026</span>
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Odoo x Make-A-Ton 9.0 Hackathon 2026 &bull; BrightLoop Platform</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
           Modern Subscription-to-Cash <br />
@@ -47,7 +72,7 @@ export default function HomePage() {
         </p>
 
         {/* Interface Role Portals */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
           {/* Admin Portal Card */}
           <Link
             href="/admin/dashboard"
@@ -113,6 +138,45 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4 ml-1" />
             </div>
           </Link>
+        </div>
+
+        {/* Member 3 Direct Operations Suite Bar */}
+        <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 mb-12">
+          <div className="text-xs uppercase tracking-wider font-semibold text-slate-400 mb-3 text-center sm:text-left sm:pl-2">
+            Operations &amp; Subscription Management Quick Links
+          </div>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+            <Link
+              href="/subscriptions"
+              className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all shadow-md shadow-blue-600/20"
+            >
+              Subscriptions &amp; Lifecycle
+            </Link>
+            <Link
+              href="/quotations"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all shadow-md shadow-indigo-600/20"
+            >
+              Quotations &amp; Conversion
+            </Link>
+            <Link
+              href="/customers"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium px-3.5 py-2.5 rounded-lg transition-all"
+            >
+              Customers
+            </Link>
+            <Link
+              href="/products"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium px-3.5 py-2.5 rounded-lg transition-all"
+            >
+              Products &amp; Variants
+            </Link>
+            <Link
+              href="/plans"
+              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium px-3.5 py-2.5 rounded-lg transition-all"
+            >
+              Recurring Plans
+            </Link>
+          </div>
         </div>
 
         {/* Feature Cards Grid */}
