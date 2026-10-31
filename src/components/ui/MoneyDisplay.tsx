@@ -7,6 +7,7 @@ export interface MoneyDisplayProps {
   className?: string;
   showSign?: boolean;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  useDisplayFont?: boolean;
 }
 
 export const MoneyDisplay: React.FC<MoneyDisplayProps> = ({
@@ -15,12 +16,12 @@ export const MoneyDisplay: React.FC<MoneyDisplayProps> = ({
   className,
   showSign = false,
   size = 'md',
+  useDisplayFont = false,
 }) => {
   const numericVal = typeof amount === 'number' ? amount : parseFloat(String(amount || 0));
   const isValid = !isNaN(numericVal);
   const safeVal = isValid ? numericVal : 0;
 
-  // Format with thousands separator and strict 2 decimal places
   const formattedNumber = Math.abs(safeVal).toLocaleString('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -30,22 +31,23 @@ export const MoneyDisplay: React.FC<MoneyDisplayProps> = ({
   const sign = isNegative ? '-' : showSign && safeVal > 0 ? '+' : '';
 
   const sizes = {
-    sm: 'text-xs',
-    md: 'text-sm font-medium',
-    lg: 'text-base font-semibold',
-    xl: 'text-2xl font-bold tracking-tight',
+    sm: 'text-xs font-medium font-sans',
+    md: 'text-sm font-semibold font-sans',
+    lg: 'text-base font-bold font-sans',
+    xl: 'text-3xl font-display font-bold tracking-tight',
   };
 
   return (
     <span
       className={cn(
-        'inline-flex items-baseline tabular-nums text-slate-900',
+        'inline-flex items-baseline tabular-nums text-[#211b15]',
         sizes[size],
-        isNegative && 'text-red-600',
+        useDisplayFont && 'font-display',
+        isNegative && 'text-[#b83a2b]',
         className
       )}
     >
-      <span className="mr-0.5 select-none">{currency}</span>
+      <span className="mr-0.5 select-none font-sans font-medium">{currency}</span>
       <span>
         {sign}
         {formattedNumber}

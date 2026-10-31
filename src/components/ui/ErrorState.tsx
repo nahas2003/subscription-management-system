@@ -20,16 +20,16 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     <div
       role="alert"
       className={cn(
-        'flex flex-col items-center justify-center rounded-xl border border-red-200 bg-red-50/50 p-6 text-center sm:p-8',
+        'flex flex-col items-center justify-center rounded-[7.5px] border border-[#e8b0a9] bg-[#fcedeb] p-6 text-center sm:p-8 font-sans',
         className
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 mb-3">
+      <div className="flex h-12 w-12 items-center justify-center rounded-[3.75px] bg-white text-[#b83a2b] border border-[#e8b0a9] mb-3">
         <AlertTriangle className="h-6 w-6" />
       </div>
 
-      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 text-sm text-red-700 max-w-md">{message}</p>
+      <h3 className="text-base font-bold text-[#211b15]">{title}</h3>
+      <p className="mt-1 text-sm text-[#8f2115] max-w-md">{message}</p>
 
       {onRetry && (
         <div className="mt-4">

@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, Percent, Tag, X, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Plus, Percent, Tag, X, CheckCircle2 } from 'lucide-react';
 
 interface DiscountRecord {
   id: string;
@@ -26,36 +26,36 @@ interface DiscountRecord {
 const mockDiscounts: DiscountRecord[] = [
   {
     id: 'disc-01',
-    name: 'Diwali Enterprise Promotion',
-    code: 'FESTIVE15',
+    name: 'Early Adopter QMS Discount',
+    code: 'EARLYBIRD10',
     type: 'Percentage',
-    value: 15,
+    value: 10,
     minPurchase: 50000,
-    validFrom: '2026-10-15',
-    validUntil: '2026-11-15',
     status: 'Active',
+    validFrom: '2026-01-01',
+    validUntil: '2026-12-31',
   },
   {
     id: 'disc-02',
-    name: 'New Startup Credit',
-    code: 'STARTUP5K',
-    type: 'Fixed',
-    value: 5000,
-    minPurchase: 20000,
-    validFrom: '2026-01-01',
-    validUntil: '2026-12-31',
+    name: 'Make-A-Ton Hackathon Promo',
+    code: 'MAKEATON9',
+    type: 'Percentage',
+    value: 15,
+    minPurchase: 10000,
     status: 'Active',
+    validFrom: '2026-10-01',
+    validUntil: '2026-11-15',
   },
   {
     id: 'disc-03',
-    name: 'Early Adopter Q1 Pass',
-    code: 'EARLYBIRD',
-    type: 'Percentage',
-    value: 20,
-    minPurchase: 10000,
-    validFrom: '2026-01-01',
-    validUntil: '2026-03-31',
-    status: 'Closed',
+    name: 'Annual Pre-payment Waiver',
+    code: 'ANNUALFLAT',
+    type: 'Fixed',
+    value: 5000,
+    minPurchase: 80000,
+    status: 'Active',
+    validFrom: '2026-06-01',
+    validUntil: '2027-05-31',
   },
 ];
 
@@ -131,23 +131,21 @@ export default function DiscountsPage() {
 
   const columns: Column<DiscountRecord>[] = [
     {
-      header: 'Promo Code',
+      header: 'Promo Name & Code',
       cell: (item) => (
-        <span className="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-sm border border-indigo-200">
-          {item.code}
-        </span>
+        <div>
+          <div className="font-bold text-[#211b15]">{item.name}</div>
+          <span className="font-mono text-xs font-bold text-[#8c591b] bg-[#fdf6ed] px-1.5 py-0.5 rounded-[3.75px] border border-[#e8b672]/60">
+            {item.code}
+          </span>
+        </div>
       ),
     },
     {
-      header: 'Campaign Name',
-      accessorKey: 'name',
-      className: 'font-semibold text-slate-800',
-    },
-    {
-      header: 'Benefit Value',
+      header: 'Discount Value',
       cell: (item) => (
-        <span className="font-semibold text-emerald-700">
-          {item.type === 'Percentage' ? `${item.value}% Off` : `₹${item.value} Flat Off`}
+        <span className="font-bold text-[#2b4c2b] text-sm">
+          {item.type === 'Percentage' ? `${item.value}% OFF` : <MoneyDisplay amount={item.value} size="sm" />}
         </span>
       ),
     },
@@ -157,7 +155,7 @@ export default function DiscountsPage() {
         item.minPurchase > 0 ? (
           <MoneyDisplay amount={item.minPurchase} size="sm" />
         ) : (
-          <span className="text-slate-400 text-xs">No limit</span>
+          <span className="text-[#96897b] text-xs">No limit</span>
         ),
     },
     {
@@ -170,17 +168,7 @@ export default function DiscountsPage() {
     },
     {
       header: 'Status',
-      cell: (item) => (
-        <span
-          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
-            item.status === 'Active'
-              ? 'bg-emerald-100 text-emerald-700'
-              : 'bg-slate-100 text-slate-500'
-          }`}
-        >
-          {item.status}
-        </span>
-      ),
+      cell: (item) => <StatusBadge status={item.status} size="sm" />,
     },
   ];
 
@@ -194,7 +182,7 @@ export default function DiscountsPage() {
       <div className="space-y-6">
         <PageHeader
           title="Promotional Discounts & Coupons"
-          description="Manage promotional campaigns, define purchase thresholds, and configure discount deduction rules (Member 4 — Task M4-03)."
+          description="Manage promotional campaigns, define purchase thresholds, and configure discount deduction rules."
           action={
             <Button
               variant="primary"
@@ -202,18 +190,18 @@ export default function DiscountsPage() {
               leftIcon={<Plus className="h-4 w-4" />}
               onClick={() => setIsModalOpen(true)}
             >
-              New Discount Code
+              Add Discount Rule
             </Button>
           }
         />
 
         {notification && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium flex items-center justify-between">
+          <div className="p-3 bg-[#eef5ee] border border-[#c5d8c4] text-[#2b4c2b] rounded-[7.5px] text-xs font-medium flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-[#7a9779]" />
               <span>{notification}</span>
             </div>
-            <button onClick={() => setNotification(null)} className="text-slate-400 hover:text-slate-600">
+            <button onClick={() => setNotification(null)} className="text-[#50463c] hover:text-[#211b15]">
               ✕
             </button>
           </div>
@@ -227,18 +215,18 @@ export default function DiscountsPage() {
         />
 
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl space-y-4">
-              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900 text-lg">Create Promo Code</h3>
-                <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans">
+            <div className="w-full max-w-md rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+              <div className="flex justify-between items-center border-b border-[#efe9e0] pb-3">
+                <h3 className="font-display text-2xl font-bold text-[#211b15]">Create Promo Code</h3>
+                <button onClick={() => setIsModalOpen(false)} className="text-[#50463c] hover:text-[#211b15]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleCreateDiscount} className="space-y-4 text-sm">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                     Campaign Name *
                   </label>
                   <Input
@@ -250,7 +238,7 @@ export default function DiscountsPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                     Promo Code *
                   </label>
                   <Input
@@ -263,20 +251,20 @@ export default function DiscountsPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                       Type *
                     </label>
                     <select
                       value={discountType}
                       onChange={(e) => setDiscountType(e.target.value as any)}
-                      className="w-full p-2 text-xs border border-slate-300 rounded-lg bg-white"
+                      className="w-full p-2 text-xs border border-[#c7bcaf] rounded-[3.75px] bg-white text-[#211b15] focus:outline-none focus:border-[#8c591b]"
                     >
                       <option value="percentage">Percentage (%)</option>
                       <option value="fixed">Fixed (₹)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                       Value *
                     </label>
                     <Input
@@ -290,7 +278,7 @@ export default function DiscountsPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                     Minimum Spend Threshold (₹)
                   </label>
                   <Input
@@ -301,12 +289,12 @@ export default function DiscountsPage() {
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                  <Button variant="outline" size="md" type="button" onClick={() => setIsModalOpen(false)}>
+                <div className="flex justify-end gap-2 pt-3 border-t border-[#efe9e0]">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button variant="primary" size="md" type="submit">
-                    Create Promo
+                  <Button type="submit" variant="primary" size="sm">
+                    Save Promo Code
                   </Button>
                 </div>
               </form>

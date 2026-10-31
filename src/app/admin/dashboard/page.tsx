@@ -15,10 +15,7 @@ import {
   IndianRupee,
   AlertTriangle,
   Receipt,
-  Plus,
   Play,
-  Users,
-  Calendar,
   CheckCircle2,
 } from 'lucide-react';
 
@@ -121,15 +118,15 @@ export default function AdminDashboardPage() {
       header: 'Customer',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.customerName}</div>
-          <div className="text-xs text-slate-500">{item.productName}</div>
+          <div className="font-bold text-[#211b15]">{item.customerName}</div>
+          <div className="text-xs text-[#96897b]">{item.productName}</div>
         </div>
       ),
     },
     {
       header: 'Plan',
       accessorKey: 'planName',
-      className: 'text-xs text-slate-600',
+      className: 'text-xs text-[#50463c]',
     },
     {
       header: 'Recurring',
@@ -149,7 +146,7 @@ export default function AdminDashboardPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.invoiceNumber}
         </span>
       ),
@@ -157,7 +154,7 @@ export default function AdminDashboardPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-medium text-slate-800',
+      className: 'font-semibold text-[#211b15]',
     },
     {
       header: 'Due Date',
@@ -173,7 +170,7 @@ export default function AdminDashboardPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
         />
       ),
     },
@@ -185,7 +182,6 @@ export default function AdminDashboardPage() {
 
   const handleRunBilling = () => {
     setBillingRunning(true);
-    // Simulate idempotent billing run
     setTimeout(() => {
       setBillingRunning(false);
       setBillingModalOpen(false);
@@ -205,30 +201,28 @@ export default function AdminDashboardPage() {
           title="Executive Dashboard"
           description="High-level operational metrics, recurring subscription lifecycle, and revenue status."
           action={
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => setBillingModalOpen(true)}
-                leftIcon={<Play className="h-4 w-4 text-[#4F46E5]" />}
-              >
-                Run Recurring Billing
-              </Button>
-            </div>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setBillingModalOpen(true)}
+              leftIcon={<Play className="h-4 w-4" />}
+            >
+              Run Recurring Billing
+            </Button>
           }
         />
 
         {billingSuccess && (
-          <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800">
+          <div className="flex items-center justify-between rounded-[7.5px] border border-[#c5d8c4] bg-[#eef5ee] p-4 text-[#2b4c2b] shadow-xs font-sans">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <CheckCircle2 className="h-5 w-5 text-[#7a9779]" />
               <div className="text-sm">
                 <strong>Billing Run Completed:</strong> Idempotent generation checked 2 active subscriptions. 0 duplicate invoices generated.
               </div>
             </div>
             <button
               onClick={() => setBillingSuccess(false)}
-              className="text-xs font-semibold text-emerald-700 hover:underline"
+              className="text-xs font-bold text-[#2b4c2b] hover:underline"
             >
               Dismiss
             </button>
@@ -260,7 +254,7 @@ export default function AdminDashboardPage() {
             value="1"
             subtitle="₹35,400 past due date"
             icon={AlertTriangle}
-            badge={<span className="text-xs font-bold text-red-600">Action Required</span>}
+            badge={<span className="text-[11px] font-bold text-[#8f2115] bg-[#fcedeb] px-2 py-0.5 rounded-[3.75px] border border-[#e8b0a9]">Action Needed</span>}
           />
         </div>
 
@@ -268,8 +262,8 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">Active Subscriptions</h2>
-              <span className="text-xs text-slate-400">Total: 4 records</span>
+              <h2 className="font-display text-2xl font-bold text-[#211b15]">ACTIVE SUBSCRIPTIONS</h2>
+              <span className="text-xs text-[#50463c]">Total: 4 records</span>
             </div>
             <DataTable
               columns={subColumns}
@@ -280,8 +274,8 @@ export default function AdminDashboardPage() {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-slate-900">Recent Invoices & Overdue</h2>
-              <span className="text-xs text-slate-400">Total: 3 records</span>
+              <h2 className="font-display text-2xl font-bold text-[#211b15]">INVOICES & OVERDUE</h2>
+              <span className="text-xs text-[#50463c]">Total: 3 records</span>
             </div>
             <DataTable
               columns={invColumns}

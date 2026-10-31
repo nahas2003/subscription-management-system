@@ -4,13 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { FormField } from '@/components/ui/FormField';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Plus, CreditCard, X, CheckCircle2 } from 'lucide-react';
+import { Plus, CheckCircle2, X } from 'lucide-react';
 import { store } from '@/lib/store';
 
 interface PaymentRecord {
@@ -18,32 +17,46 @@ interface PaymentRecord {
   paymentRef: string;
   invoiceNumber: string;
   customerName: string;
-  amount: number;
   paymentDate: string;
+  amount: number;
   paymentMethod: string;
-  status: 'Confirmed' | 'Paid';
+  status: 'Confirmed' | 'Paid' | 'Failed';
+  bankReference?: string;
 }
 
 const mockPayments: PaymentRecord[] = [
   {
     id: 'pay-01',
-    paymentRef: 'PAY-2026-001',
-    invoiceNumber: 'INV-2026-002',
-    customerName: 'Apex Global Media',
-    amount: 35400,
-    paymentDate: '2026-10-12',
+    paymentRef: 'PAY-2026-0031',
+    invoiceNumber: 'INV-2026-0019',
+    customerName: 'Apex Technologies Pvt Ltd',
+    paymentDate: '2026-10-04',
+    amount: 17700,
     paymentMethod: 'Bank Transfer (NEFT)',
-    status: 'Confirmed',
+    status: 'Paid',
+    bankReference: 'HDFC202610049921',
   },
   {
     id: 'pay-02',
-    paymentRef: 'PAY-2026-002',
-    invoiceNumber: 'INV-2026-003',
-    customerName: 'BrightWave Logistics',
-    amount: 5000,
-    paymentDate: '2026-10-05',
-    paymentMethod: 'UPI Merchant Intent',
-    status: 'Confirmed',
+    paymentRef: 'PAY-2026-0028',
+    invoiceNumber: 'INV-2026-0014',
+    customerName: 'Kochi Logistics Hub',
+    paymentDate: '2026-09-22',
+    amount: 23600,
+    paymentMethod: 'Corporate Cheque #49281',
+    status: 'Paid',
+    bankReference: 'SBI-CHQ-49281',
+  },
+  {
+    id: 'pay-03',
+    paymentRef: 'PAY-2026-0021',
+    invoiceNumber: 'INV-2026-0008',
+    customerName: 'Apex Technologies Pvt Ltd',
+    paymentDate: '2026-08-30',
+    amount: 118000,
+    paymentMethod: 'RTGS Electronic Transfer',
+    status: 'Paid',
+    bankReference: 'AXIS202608301129',
   },
 ];
 
@@ -143,7 +156,7 @@ export default function PaymentsPage() {
     {
       header: 'Payment Ref',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-slate-900">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.paymentRef}
         </span>
       ),
@@ -151,7 +164,7 @@ export default function PaymentsPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs text-indigo-600 font-medium">
+        <span className="font-mono text-xs text-[#50463c]">
           {item.invoiceNumber}
         </span>
       ),
@@ -159,16 +172,16 @@ export default function PaymentsPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
-      header: 'Payment Date',
+      header: 'Date',
       cell: (item) => <DateDisplay date={item.paymentDate} />,
     },
     {
       header: 'Method',
       cell: (item) => (
-        <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs text-slate-700 font-medium">
+        <span className="inline-flex rounded-[3.75px] bg-[#efe9e0] border border-[#c7bcaf] px-2 py-0.5 text-xs text-[#211b15] font-medium">
           {item.paymentMethod}
         </span>
       ),
@@ -176,7 +189,7 @@ export default function PaymentsPage() {
     {
       header: 'Amount Received',
       cell: (item) => (
-        <MoneyDisplay amount={item.amount} size="sm" className="font-semibold text-emerald-700" />
+        <MoneyDisplay amount={item.amount} size="sm" className="font-bold text-[#2b4c2b]" />
       ),
     },
     {
@@ -190,34 +203,35 @@ export default function PaymentsPage() {
       role="admin"
       currentPath="/admin/payments"
       user={{ name: 'System Admin', email: 'admin@brightloop.in', role: 'admin' }}
-      title="Payments"
+      title="Payment Settlements"
     >
       <div className="space-y-6">
         <PageHeader
-          title="Payment Ledger & Allocation"
-          description="Track incoming customer remittances, allocate against confirmed invoices, and maintain financial settlement trails (Member 4 — Task M4-04)."
+          title="Payment Receipts & Settlements"
+          description="Track incoming wire transfers, offline cheques, and UPI allocations mapped directly to issued invoices."
           action={
-            invoices.length > 0 ? (
-              <Button
-                variant="primary"
-                size="md"
-                leftIcon={<Plus className="h-4 w-4" />}
-                onClick={() => setIsRecordModalOpen(true)}
-              >
-                Record Payment
-              </Button>
-            ) : undefined
+            <Button
+              variant="primary"
+              size="md"
+              leftIcon={<Plus className="h-4 w-4" />}
+              onClick={() => setIsRecordModalOpen(true)}
+            >
+              Record Payment
+            </Button>
           }
         />
 
         {notification && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>{notification}</span>
+          <div className="flex items-center justify-between rounded-[7.5px] border border-[#c5d8c4] bg-[#eef5ee] p-4 text-[#2b4c2b] shadow-xs font-sans">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="h-5 w-5 text-[#7a9779]" />
+              <span className="text-sm font-medium">{notification}</span>
             </div>
-            <button onClick={() => setNotification(null)} className="text-slate-400 hover:text-slate-600">
-              ✕
+            <button
+              onClick={() => setNotification(null)}
+              className="text-xs font-bold text-[#2b4c2b] hover:underline"
+            >
+              Dismiss
             </button>
           </div>
         )}
@@ -231,19 +245,26 @@ export default function PaymentsPage() {
 
         {/* Record Payment Dialog */}
         {isRecordModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl space-y-4">
-              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900 text-lg">Record Manual Remittance</h3>
-                <button onClick={() => setIsRecordModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                  <X className="w-5 h-5" />
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="w-full max-w-lg rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+              <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
+                <h3 className="font-display text-2xl font-bold text-[#211b15]">RECORD PAYMENT ALLOCATION</h3>
+                <button
+                  onClick={() => setIsRecordModalOpen(false)}
+                  className="text-[#50463c] hover:text-[#211b15]"
+                >
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
               <form onSubmit={handleRecordSubmit} className="space-y-4 text-sm">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
-                    Select Invoice *
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
+                    Select Outstanding Invoice *
                   </label>
                   <select
                     value={selectedInvoiceId}
@@ -252,18 +273,21 @@ export default function PaymentsPage() {
                       const inv = invoices.find((i) => i.id === e.target.value);
                       if (inv) setAmount(inv.balance_due);
                     }}
-                    className="w-full p-2 text-xs border border-slate-300 rounded-lg bg-slate-50 text-slate-800"
+                    className="w-full p-2 text-xs border border-[#c7bcaf] rounded-[3.75px] bg-[#fcfaf1] text-[#211b15] focus:outline-none focus:border-[#8c591b]"
                   >
+                    {invoices.length === 0 && (
+                      <option value="">No outstanding invoices (using demo balance)</option>
+                    )}
                     {invoices.map((inv) => (
                       <option key={inv.id} value={inv.id}>
-                        {inv.invoice_number} (Due: ₹{inv.balance_due.toLocaleString('en-IN')})
+                        {inv.invoice_number} (Due: ₹{inv.balance_due?.toLocaleString('en-IN')})
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                     Amount to Credit (₹) *
                   </label>
                   <Input
@@ -276,13 +300,13 @@ export default function PaymentsPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                     Payment Method *
                   </label>
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full p-2 text-xs border border-slate-300 rounded-lg bg-white text-slate-800"
+                    className="w-full p-2 text-xs border border-[#c7bcaf] rounded-[3.75px] bg-white text-[#211b15] focus:outline-none focus:border-[#8c591b]"
                   >
                     <option value="bank_transfer">Bank Transfer (NEFT/RTGS)</option>
                     <option value="upi">UPI Merchant Transfer</option>
@@ -292,7 +316,7 @@ export default function PaymentsPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-[#50463c] block mb-1">
                     Reference / Transaction Note
                   </label>
                   <Input
@@ -303,7 +327,7 @@ export default function PaymentsPage() {
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-3 border-t border-[#efe9e0]">
                   <Button variant="outline" size="md" type="button" onClick={() => setIsRecordModalOpen(false)}>
                     Cancel
                   </Button>

@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge, InvoiceStatus } from '@/components/ui/StatusBadge';
-import { Plus, Receipt, AlertCircle, Play, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Play, Download, CheckCircle2 } from 'lucide-react';
 import { store } from '@/lib/store';
 
 interface AdminInvoiceItem {
@@ -27,11 +27,11 @@ interface AdminInvoiceItem {
 
 const mockInvoices: AdminInvoiceItem[] = [
   {
-    id: 'inv-01',
+    id: 'inv-101',
     invoiceNumber: 'INV-2026-0042',
-    customerName: 'Acme Corporation Ltd',
-    issueDate: '2026-10-15',
-    dueDate: '2026-11-15',
+    customerName: 'Apex Technologies Pvt Ltd',
+    issueDate: '2026-10-22',
+    dueDate: '2026-11-05',
     subtotal: 15000,
     taxAmount: 2700,
     total: 17700,
@@ -40,28 +40,41 @@ const mockInvoices: AdminInvoiceItem[] = [
     status: 'Confirmed',
   },
   {
-    id: 'inv-02',
+    id: 'inv-102',
     invoiceNumber: 'INV-2026-0038',
-    customerName: 'BrightWave Logistics',
-    issueDate: '2026-10-01',
-    dueDate: '2026-10-15',
-    subtotal: 20000,
-    taxAmount: 3600,
-    total: 23600,
-    amountPaid: 5000,
-    balanceDue: 18600,
-    status: 'Overdue',
-  },
-  {
-    id: 'inv-03',
-    invoiceNumber: 'INV-2026-0019',
-    customerName: 'Apex Global Media',
-    issueDate: '2026-10-10',
-    dueDate: '2026-10-25',
+    customerName: 'Malabar Retailers Ltd',
+    issueDate: '2026-10-06',
+    dueDate: '2026-10-20',
     subtotal: 30000,
     taxAmount: 5400,
     total: 35400,
-    amountPaid: 35400,
+    amountPaid: 0,
+    balanceDue: 35400,
+    status: 'Overdue',
+  },
+  {
+    id: 'inv-103',
+    invoiceNumber: 'INV-2026-0019',
+    customerName: 'Apex Technologies Pvt Ltd',
+    issueDate: '2026-09-21',
+    dueDate: '2026-10-05',
+    subtotal: 15000,
+    taxAmount: 2700,
+    total: 17700,
+    amountPaid: 17700,
+    balanceDue: 0,
+    status: 'Paid',
+  },
+  {
+    id: 'inv-104',
+    invoiceNumber: 'INV-2026-0014',
+    customerName: 'Kochi Logistics Hub',
+    issueDate: '2026-09-10',
+    dueDate: '2026-09-24',
+    subtotal: 20000,
+    taxAmount: 3600,
+    total: 23600,
+    amountPaid: 23600,
     balanceDue: 0,
     status: 'Paid',
   },
@@ -140,7 +153,7 @@ export default function InvoicesPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.invoiceNumber}
         </span>
       ),
@@ -148,7 +161,7 @@ export default function InvoicesPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Issue Date',
@@ -164,7 +177,7 @@ export default function InvoicesPage() {
     },
     {
       header: 'Total',
-      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.total} size="sm" className="font-bold" />,
     },
     {
       header: 'Balance Due',
@@ -172,7 +185,7 @@ export default function InvoicesPage() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#7a9779]'}
         />
       ),
     },
@@ -187,31 +200,33 @@ export default function InvoicesPage() {
       role="admin"
       currentPath="/admin/invoices"
       user={{ name: 'System Admin', email: 'admin@brightloop.in', role: 'admin' }}
-      title="Invoices"
+      title="Invoices & Billing"
     >
       <div className="space-y-6">
         <PageHeader
-          title="Invoices & Recurring Billing"
-          description="Manage generated customer invoices, monitor payment settlements, and trigger idempotent billing runs (Member 4 — Task M4-01 & M4-02)."
+          title="Tax Invoices & Accounts Receivable"
+          description="Manage generated customer invoices, monitor payment settlements, and trigger idempotent billing runs."
           action={
-            <Button
-              variant="primary"
-              size="md"
-              onClick={handleRunBilling}
-              leftIcon={<Play className="h-4 w-4 fill-white" />}
-            >
-              Run Billing Cycle
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleRunBilling}
+                leftIcon={<Play className="h-4 w-4" />}
+              >
+                Run Billing Cycle
+              </Button>
+            </div>
           }
         />
 
         {notification && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium flex items-center justify-between">
+          <div className="p-3 bg-[#eef5ee] border border-[#c5d8c4] text-[#2b4c2b] rounded-[7.5px] text-xs font-medium flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-[#7a9779]" />
               <span>{notification}</span>
             </div>
-            <button onClick={() => setNotification(null)} className="text-slate-400 hover:text-slate-600">
+            <button onClick={() => setNotification(null)} className="text-[#50463c] hover:text-[#211b15]">
               ✕
             </button>
           </div>

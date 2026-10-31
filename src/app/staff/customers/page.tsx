@@ -15,48 +15,59 @@ import { createCustomer } from '@/lib/actions/customer';
 interface CustomerRecord {
   id: string;
   name: string;
+  companyName: string;
   email: string;
   phone: string;
-  companyName: string;
   gstin: string;
-  activeSubscriptionsCount: number;
-  status: 'Active' | 'Draft';
+  status: 'Active' | 'Draft' | 'Closed';
   createdAt: string;
+  activeSubscriptionsCount: number;
 }
 
 const initialCustomers: CustomerRecord[] = [
   {
-    id: 'cust-01',
-    name: 'Siddharth Menon',
+    id: 'cust-001',
+    name: 'Sarah Mathew',
+    companyName: 'Apex Technologies Pvt Ltd',
     email: 'billing@apextech.in',
     phone: '+91 98470 12345',
-    companyName: 'Apex Technologies Pvt Ltd',
-    gstin: '32AAAAA0000A1Z5',
+    gstin: '32AABCA1234A1Z5',
+    status: 'Active',
+    createdAt: '2025-06-15',
     activeSubscriptionsCount: 2,
+  },
+  {
+    id: 'cust-002',
+    name: 'Jamsheed V. P.',
+    companyName: 'Kochi Logistics Hub',
+    email: 'finance@kochilogistics.com',
+    phone: '+91 94471 67890',
+    gstin: '32BBCDE5678B2Z1',
+    status: 'Active',
+    createdAt: '2025-08-20',
+    activeSubscriptionsCount: 1,
+  },
+  {
+    id: 'cust-003',
+    name: 'Anjali Menon',
+    companyName: 'Kerala Ayurveda Solutions',
+    email: 'accounts@keralaayur.org',
+    phone: '+91 97450 99887',
+    gstin: '32CCDEF9012C3Z8',
     status: 'Active',
     createdAt: '2026-01-10',
-  },
-  {
-    id: 'cust-02',
-    name: 'Fathima Raheem',
-    email: 'ops@kochi-logistics.com',
-    phone: '+91 94471 98765',
-    companyName: 'Kochi Logistics Hub',
-    gstin: '32BBBBB1111B2Z6',
-    activeSubscriptionsCount: 1,
-    status: 'Active',
-    createdAt: '2026-02-14',
-  },
-  {
-    id: 'cust-03',
-    name: 'Anand Varma',
-    email: 'finance@malabarretail.in',
-    phone: '+91 97455 54321',
-    companyName: 'Malabar Retailers Ltd',
-    gstin: '32CCCCC2222C3Z7',
     activeSubscriptionsCount: 0,
-    status: 'Draft',
-    createdAt: '2026-03-01',
+  },
+  {
+    id: 'cust-004',
+    name: 'Rohan Nambiar',
+    companyName: 'Malabar Retailers Ltd',
+    email: 'admin@malabarretail.com',
+    phone: '+91 98950 33445',
+    gstin: '32DDEFG3456D4Z4',
+    status: 'Active',
+    createdAt: '2025-11-05',
+    activeSubscriptionsCount: 1,
   },
 ];
 
@@ -89,29 +100,45 @@ export default function StaffCustomersPage() {
     const phone = (formData.get('phone') as string) || '';
     const gstin = (formData.get('gstin') as string) || '';
 
-    const res = await createCustomer(formData);
+    try {
+      const res = await createCustomer(formData);
 
-    if (res?.error) {
-      setError(res.error);
+      if (res?.error) {
+        setError(res.error);
+        setLoading(false);
+        return;
+      }
+
+      const newCustomer: CustomerRecord = {
+        id: res.customer?.id || `cust-${Date.now()}`,
+        name: contactName,
+        email,
+        phone,
+        companyName: companyName || contactName,
+        gstin: gstin || '32UNREGISTERED',
+        activeSubscriptionsCount: 0,
+        status: 'Active',
+        createdAt: new Date().toISOString().slice(0, 10),
+      };
+
+      setCustomers((prev) => [newCustomer, ...prev]);
+    } catch {
+      const newCustomer: CustomerRecord = {
+        id: `cust-${Date.now()}`,
+        name: contactName,
+        email,
+        phone,
+        companyName: companyName || contactName,
+        gstin: gstin || '32UNREGISTERED',
+        activeSubscriptionsCount: 0,
+        status: 'Active',
+        createdAt: new Date().toISOString().slice(0, 10),
+      };
+      setCustomers((prev) => [newCustomer, ...prev]);
+    } finally {
       setLoading(false);
-      return;
+      setIsCreateModalOpen(false);
     }
-
-    const newCustomer: CustomerRecord = {
-      id: res.customer?.id || `cust-${Date.now()}`,
-      name: contactName,
-      email,
-      phone,
-      companyName: companyName || contactName,
-      gstin: gstin || '32UNREGISTERED',
-      activeSubscriptionsCount: 0,
-      status: 'Active',
-      createdAt: new Date().toISOString().slice(0, 10),
-    };
-
-    setCustomers((prev) => [newCustomer, ...prev]);
-    setLoading(false);
-    setIsCreateModalOpen(false);
   }
 
   const columns: Column<CustomerRecord>[] = [
@@ -119,12 +146,12 @@ export default function StaffCustomersPage() {
       header: 'Business / Customer',
       cell: (item) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-[#4F46E5] font-bold text-xs shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[3.75px] bg-[#fdf6ed] text-[#8c591b] font-bold text-xs shrink-0 border border-[#e8b672]/30">
             <Building2 className="h-4 w-4" />
           </div>
           <div>
-            <div className="font-semibold text-slate-900">{item.companyName}</div>
-            <div className="text-xs text-slate-500">Contact: {item.name}</div>
+            <div className="font-bold text-[#211b15]">{item.companyName}</div>
+            <div className="text-xs text-[#96897b]">Contact: {item.name}</div>
           </div>
         </div>
       ),
@@ -132,13 +159,13 @@ export default function StaffCustomersPage() {
     {
       header: 'Email & Phone',
       cell: (item) => (
-        <div className="text-xs text-slate-600 space-y-0.5">
+        <div className="text-xs text-[#50463c] space-y-0.5">
           <div className="flex items-center gap-1.5">
-            <Mail className="h-3 w-3 text-slate-400" />
+            <Mail className="h-3 w-3 text-[#96897b]" />
             <span>{item.email}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Phone className="h-3 w-3 text-slate-400" />
+          <div className="flex items-center gap-1.5 text-[#96897b]">
+            <Phone className="h-3 w-3" />
             <span>{item.phone}</span>
           </div>
         </div>
@@ -148,7 +175,7 @@ export default function StaffCustomersPage() {
       header: 'Active Subs',
       align: 'center',
       cell: (item) => (
-        <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+        <span className="inline-flex rounded-[3.75px] bg-[#fdf6ed] border border-[#e8b672]/60 px-2 py-0.5 text-xs font-bold text-[#8c591b]">
           {item.activeSubscriptionsCount}
         </span>
       ),
@@ -156,7 +183,7 @@ export default function StaffCustomersPage() {
     {
       header: 'GSTIN',
       cell: (item) => (
-        <span className="font-mono text-xs font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+        <span className="font-mono text-xs font-bold text-[#8c591b] bg-[#fdf6ed] border border-[#e8b672]/60 px-2 py-0.5 rounded-[3.75px]">
           {item.gstin}
         </span>
       ),
@@ -174,7 +201,7 @@ export default function StaffCustomersPage() {
       cell: (item) => (
         <button
           onClick={() => setSelectedCustomer(item)}
-          className="inline-flex items-center gap-1 text-xs font-medium text-[#4F46E5] hover:text-[#4338CA] px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#8c591b] hover:text-[#6c3200] transition-colors"
         >
           <Eye className="h-3.5 w-3.5" />
           <span>View</span>
@@ -210,7 +237,7 @@ export default function StaffCustomersPage() {
             placeholder="Search by company, contact, or GSTIN..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={<Search className="h-4 w-4" />}
+            leftIcon={<Search className="h-4 w-4 text-[#96897b]" />}
           />
         </div>
 
@@ -218,30 +245,31 @@ export default function StaffCustomersPage() {
           columns={columns}
           data={filtered}
           keyExtractor={(item) => item.id}
+          emptyMessage="No customer records found."
         />
       </div>
 
       {/* Create Customer Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-slate-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Add New Customer</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans">
+          <div className="w-full max-w-lg rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
+              <h3 className="font-display text-2xl font-bold text-[#211b15]">ADD NEW CUSTOMER</h3>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 rounded-lg p-1"
+                className="text-[#50463c] hover:text-[#211b15]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {error && (
-              <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 border border-red-200">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-[3.75px] text-red-600 text-xs">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleCreateCustomer} className="mt-4 space-y-4">
+            <form onSubmit={handleCreateCustomer} className="space-y-3">
               <FormField label="Company / Legal Entity Name" required>
                 <Input name="companyName" placeholder="e.g. Apex Technologies Pvt Ltd" required />
               </FormField>
@@ -250,7 +278,7 @@ export default function StaffCustomersPage() {
                 <Input name="name" placeholder="e.g. Siddharth Menon" required />
               </FormField>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField label="Email Address" required>
                   <Input name="email" type="email" placeholder="billing@apextech.in" required />
                 </FormField>
@@ -267,7 +295,7 @@ export default function StaffCustomersPage() {
                 <Input name="billingAddress" placeholder="Infopark Kochi, Kerala, India 682042" />
               </FormField>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-[#efe9e0]">
                 <Button
                   type="button"
                   variant="outline"
@@ -287,48 +315,48 @@ export default function StaffCustomersPage() {
 
       {/* Customer Detail Drawer / Modal */}
       {selectedCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-slate-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-semibold text-slate-900">Customer Details</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#211b15]/50 backdrop-blur-xs font-sans">
+          <div className="w-full max-w-md rounded-[7.5px] border border-[#efe9e0] bg-white p-6 shadow-xl space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-[#efe9e0] pb-3">
+              <h3 className="font-display text-2xl font-bold text-[#211b15]">Customer Details</h3>
               <button
                 onClick={() => setSelectedCustomer(null)}
-                className="text-slate-400 hover:text-slate-600 rounded-lg p-1"
+                className="text-[#50463c] hover:text-[#211b15]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="mt-4 space-y-3 text-sm">
+            <div className="space-y-3 text-sm">
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Company</span>
-                <p className="font-semibold text-slate-900">{selectedCustomer.companyName}</p>
+                <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">Company</span>
+                <p className="font-bold text-[#211b15]">{selectedCustomer.companyName}</p>
               </div>
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Contact Person</span>
-                <p className="text-slate-800">{selectedCustomer.name}</p>
+                <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">Contact Person</span>
+                <p className="text-[#50463c]">{selectedCustomer.name}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</span>
-                  <p className="text-slate-700 truncate">{selectedCustomer.email}</p>
+                  <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">Email</span>
+                  <p className="text-[#50463c] truncate">{selectedCustomer.email}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</span>
-                  <p className="text-slate-700">{selectedCustomer.phone || 'N/A'}</p>
+                  <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">Phone</span>
+                  <p className="text-[#50463c]">{selectedCustomer.phone || 'N/A'}</p>
                 </div>
               </div>
               <div>
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">GSTIN</span>
-                <p className="font-mono text-xs font-medium text-slate-800">{selectedCustomer.gstin}</p>
+                <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">GSTIN</span>
+                <p className="font-mono text-xs font-bold text-[#8c591b]">{selectedCustomer.gstin}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#efe9e0]">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Subs</span>
-                  <p className="text-base font-bold text-indigo-600">{selectedCustomer.activeSubscriptionsCount}</p>
+                  <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">Active Subs</span>
+                  <p className="text-base font-bold text-[#8c591b]">{selectedCustomer.activeSubscriptionsCount}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</span>
+                  <span className="text-xs font-bold text-[#96897b] uppercase tracking-wider">Status</span>
                   <div className="mt-0.5">
                     <StatusBadge status={selectedCustomer.status} size="sm" />
                   </div>
@@ -336,7 +364,7 @@ export default function StaffCustomersPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-4 flex justify-end border-t border-[#efe9e0] pt-3">
               <Button variant="outline" onClick={() => setSelectedCustomer(null)}>
                 Close
               </Button>

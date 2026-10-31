@@ -15,7 +15,7 @@ interface PaymentModalProps {
   invoice: Invoice;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (params: PaymentParams) => Promise<void>;
+onSubmit?: (params: PaymentParams) => Promise<void>;
   onRecordPayment?: (params: PaymentParams) => Promise<void>;
 }
 
@@ -26,6 +26,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onSubmit,
   onRecordPayment,
 }) => {
+  const handleSubmitAction = onSubmit || onRecordPayment || (async () => {});
   const [amount, setAmount] = useState<number>(invoice.balance_due);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
   const [paymentDate, setPaymentDate] = useState<string>(
@@ -52,7 +53,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     try {
       setIsSubmitting(true);
-      const submitFn = onSubmit || onRecordPayment;
+const submitFn = onSubmit || onRecordPayment;
       if (submitFn) {
         await submitFn({
           invoiceId: invoice.id,

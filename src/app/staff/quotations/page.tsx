@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { QuotationStatus } from '@/types/domain';
+import { Button } from '@/components/ui/Button';
 import { Plus, Eye } from 'lucide-react';
 
 interface StaffQuotation {
@@ -19,7 +18,7 @@ interface StaffQuotation {
   totalAmount: number;
   quotationDate: string;
   validUntil: string;
-  status: QuotationStatus | string;
+  status: string;
 }
 
 const mockQuotations: StaffQuotation[] = [
@@ -30,7 +29,7 @@ const mockQuotations: StaffQuotation[] = [
     totalAmount: 118000,
     quotationDate: '2026-01-10',
     validUntil: '2026-02-10',
-    status: 'converted',
+    status: 'Confirmed',
   },
   {
     id: 'quo-02',
@@ -39,7 +38,7 @@ const mockQuotations: StaffQuotation[] = [
     totalAmount: 28320,
     quotationDate: '2026-02-10',
     validUntil: '2026-03-10',
-    status: 'confirmed',
+    status: 'Confirmed',
   },
   {
     id: 'quo-03',
@@ -48,7 +47,7 @@ const mockQuotations: StaffQuotation[] = [
     totalAmount: 35400,
     quotationDate: '2026-02-28',
     validUntil: '2026-03-28',
-    status: 'sent',
+    status: 'Sent',
   },
 ];
 
@@ -57,7 +56,7 @@ export default function StaffQuotationsPage() {
     {
       header: 'Quote #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-slate-800">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.quotationNumber}
         </span>
       ),
@@ -65,11 +64,11 @@ export default function StaffQuotationsPage() {
     {
       header: 'Customer',
       accessorKey: 'customerName',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
       header: 'Total',
-      cell: (item) => <MoneyDisplay amount={item.totalAmount} size="sm" className="font-semibold" />,
+      cell: (item) => <MoneyDisplay amount={item.totalAmount} size="sm" className="font-bold" />,
     },
     {
       header: 'Date',
@@ -85,12 +84,14 @@ export default function StaffQuotationsPage() {
     },
     {
       header: 'Actions',
+      align: 'right',
       cell: (item) => (
         <Link
-          href="/quotations"
-          className="p-1 rounded-md text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors inline-block"
+          href={`/quotations/${item.id}`}
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#8c591b] hover:text-[#6c3200] transition-colors"
         >
-          <Eye className="h-4 w-4" />
+          <Eye className="h-3.5 w-3.5" />
+          <span>View</span>
         </Link>
       ),
     },

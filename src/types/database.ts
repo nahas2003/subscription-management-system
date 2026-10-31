@@ -343,8 +343,10 @@ export type PaymentMethod = 'bank_transfer' | 'upi' | 'credit_card' | 'cash' | '
 export interface Payment {
   id: string;
   payment_reference: string;
-  payment_number?: string;
+payment_number?: string;
   invoice_id?: string | null;
+  reference?: string | null;
+  status?: string;
   customer_id: string;
   payment_method: PaymentMethod;
   amount: number;
@@ -358,8 +360,9 @@ export interface PaymentAllocation {
   id: string;
   payment_id: string;
   invoice_id: string;
-  amount?: number;
   amount_allocated: number;
+  amount?: number;
+  allocated_at?: string;
   created_at: string;
 }
 

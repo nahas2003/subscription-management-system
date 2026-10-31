@@ -19,7 +19,7 @@ export const PaymentsTable: React.FC<PaymentsTableProps> = ({
       if (methodFilter !== 'all' && p.payment_method !== methodFilter) return false;
       if (search) {
         const q = search.toLowerCase();
-        const matchesRef = (p.payment_reference || p.payment_number || '').toLowerCase().includes(q);
+const matchesRef = (p.payment_reference || p.payment_number || '').toLowerCase().includes(q);
         const matchesCust = p.customer_id.toLowerCase().includes(q);
         if (!matchesRef && !matchesCust) return false;
       }

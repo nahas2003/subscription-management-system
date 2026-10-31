@@ -4,18 +4,38 @@ import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatCard } from '@/components/ui/StatCard';
-import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DataTable, Column } from '@/components/ui/DataTable';
+import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { Button } from '@/components/ui/Button';
-import { IndianRupee, Repeat, Receipt, AlertTriangle, BarChart3, Play, CheckCircle2 } from 'lucide-react';
+import { IndianRupee, Repeat, Receipt, AlertTriangle, Play, CheckCircle2 } from 'lucide-react';
 
 interface RevenueBreakdownRow {
   period: string;
   invoicedTotal: number;
   revenueReceived: number;
   outstandingBalance: number;
+  activeSubscriptionsCount?: number;
   collectionRate: string;
 }
+
+const mockReportData: RevenueBreakdownRow[] = [
+  {
+    period: 'Current Period (October 2026)',
+    invoicedTotal: 76700,
+    revenueReceived: 40400,
+    outstandingBalance: 36300,
+    activeSubscriptionsCount: 3,
+    collectionRate: '52.7%',
+  },
+  {
+    period: 'Historical Baseline (Q1–Q3 2026)',
+    invoicedTotal: 159700,
+    revenueReceived: 159700,
+    outstandingBalance: 0,
+    activeSubscriptionsCount: 2,
+    collectionRate: '100.0%',
+  },
+];
 
 export default function ReportsPage() {
   const [metrics, setMetrics] = useState({
@@ -26,7 +46,7 @@ export default function ReportsPage() {
     overdue_invoices_count: 1,
     active_subscriptions_count: 2,
   });
-  const [reportRows, setReportRows] = useState<RevenueBreakdownRow[]>([]);
+  const [reportRows, setReportRows] = useState<RevenueBreakdownRow[]>(mockReportData);
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -95,32 +115,31 @@ export default function ReportsPage() {
     {
       header: 'Accounting Period',
       accessorKey: 'period',
-      className: 'font-semibold text-slate-800',
+      className: 'font-bold text-[#211b15]',
     },
     {
-      header: 'Total Invoiced',
+      header: 'Total Billed',
       cell: (item) => <MoneyDisplay amount={item.invoicedTotal} size="sm" />,
     },
     {
       header: 'Cash Collected',
       cell: (item) => (
-        <MoneyDisplay amount={item.revenueReceived} size="sm" className="font-semibold text-emerald-700" />
+        <MoneyDisplay amount={item.revenueReceived} size="sm" className="font-bold text-[#2b4c2b]" />
       ),
     },
     {
-      header: 'Outstanding Balance',
+      header: 'Pending Balance',
       cell: (item) => (
-        <MoneyDisplay
-          amount={item.outstandingBalance}
-          size="sm"
-          className={item.outstandingBalance > 0 ? 'font-semibold text-amber-700' : 'text-slate-500'}
-        />
+        <MoneyDisplay amount={item.outstandingBalance} size="sm" className="font-bold text-[#b83a2b]" />
       ),
     },
     {
       header: 'Collection Rate',
-      accessorKey: 'collectionRate',
-      className: 'font-mono text-xs font-semibold text-indigo-700',
+      cell: (item) => (
+        <span className="inline-flex rounded-[3.75px] bg-[#efe9e0] border border-[#c7bcaf] px-2.5 py-0.5 text-xs font-bold text-[#211b15]">
+          {item.collectionRate}
+        </span>
+      ),
     },
   ];
 
@@ -129,17 +148,17 @@ export default function ReportsPage() {
       role="admin"
       currentPath="/admin/reports"
       user={{ name: 'System Admin', email: 'admin@brightloop.in', role: 'admin' }}
-      title="Financial Reports"
+      title="Financial Analytics"
     >
       <div className="space-y-6">
         <PageHeader
           title="Financial Reports & Performance Analytics"
-          description="Audited reconciliation of total billings, verified cash collections, and outstanding/overdue derived metrics (Member 4 — Task M4-05)."
+          description="Audited reconciliation of total billings, verified cash collections, and outstanding/overdue derived metrics."
           action={
             <Button
               variant="primary"
               size="md"
-              leftIcon={<Play className="h-4 w-4 fill-white" />}
+              leftIcon={<Play className="h-4 w-4" />}
               onClick={handleRunBilling}
             >
               Trigger Billing Run
@@ -148,12 +167,12 @@ export default function ReportsPage() {
         />
 
         {notification && (
-          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium flex items-center justify-between">
+          <div className="p-3 bg-[#eef5ee] border border-[#c5d8c4] text-[#2b4c2b] rounded-[7.5px] text-xs font-medium flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-[#7a9779]" />
               <span>{notification}</span>
             </div>
-            <button onClick={() => setNotification(null)} className="text-slate-400 hover:text-slate-600">
+            <button onClick={() => setNotification(null)} className="text-[#50463c] hover:text-[#211b15]">
               ✕
             </button>
           </div>
@@ -163,35 +182,36 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Total Revenue Received"
-            value={<MoneyDisplay amount={metrics.revenue_received} size="lg" className="text-emerald-700" />}
+            value={<MoneyDisplay amount={metrics.revenue_received} size="xl" className="text-[#2b4c2b]" />}
             subtitle="Verified payment allocations"
-            icon={<IndianRupee className="h-5 w-5 text-emerald-600" />}
+            icon={IndianRupee}
           />
           <StatCard
             title="Total Invoiced Amount"
-            value={<MoneyDisplay amount={metrics.invoiced_amount} size="lg" />}
+            value={<MoneyDisplay amount={metrics.invoiced_amount} size="xl" />}
             subtitle="Confirmed billing statements"
-            icon={<Receipt className="h-5 w-5 text-indigo-600" />}
+            icon={Receipt}
           />
           <StatCard
             title="Outstanding Balance"
-            value={<MoneyDisplay amount={metrics.outstanding_amount} size="lg" className="text-amber-700" />}
+            value={<MoneyDisplay amount={metrics.outstanding_amount} size="xl" className="text-[#8c591b]" />}
             subtitle="Pending customer clearance"
-            icon={<Repeat className="h-5 w-5 text-amber-600" />}
+            icon={Repeat}
           />
           <StatCard
             title="Overdue Receivables"
-            value={<MoneyDisplay amount={metrics.overdue_amount} size="lg" className="text-rose-700" />}
+            value={<MoneyDisplay amount={metrics.overdue_amount} size="xl" className="text-[#b83a2b]" />}
             subtitle={`${metrics.overdue_invoices_count} invoice(s) past due`}
-            icon={<AlertTriangle className="h-5 w-5 text-rose-600" />}
+            icon={AlertTriangle}
           />
         </div>
 
         {/* Breakdown Table */}
         <div className="space-y-3">
-          <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-            Reconciliation Breakdown by Period
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-2xl font-bold text-[#211b15]">FISCAL RECONCILIATION</h2>
+            <span className="text-xs text-[#96897b]">Amounts in INR (₹)</span>
+          </div>
           <DataTable
             columns={columns}
             data={reportRows}

@@ -3,11 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { DataTable, Column } from '@/components/ui/DataTable';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
-import { DataTable, Column } from '@/components/ui/DataTable';
-import { CreditCard, CheckCircle2 } from 'lucide-react';
 import { getCustomerPortalData } from '@/lib/actions/portal';
 
 interface PaymentHistoryItem {
@@ -15,29 +14,29 @@ interface PaymentHistoryItem {
   paymentRef: string;
   invoiceNumber: string;
   paymentDate: string;
-  method: string;
   amount: number;
-  status: 'Confirmed' | 'Paid';
+  method: string;
+  status: 'Paid' | 'Confirmed';
 }
 
 const mockPayments: PaymentHistoryItem[] = [
   {
-    id: 'pay-001',
-    paymentRef: 'PAY-2026-0019-01',
+    id: 'pay-01',
+    paymentRef: 'PAY-2026-0031',
     invoiceNumber: 'INV-2026-0019',
-    paymentDate: '2026-10-02',
-    method: 'Bank Transfer (NEFT)',
+    paymentDate: '2026-10-04',
     amount: 17700,
-    status: 'Confirmed',
+    method: 'Bank Transfer (NEFT)',
+    status: 'Paid',
   },
   {
-    id: 'pay-002',
-    paymentRef: 'PAY-2026-0005-01',
-    invoiceNumber: 'INV-2026-0005',
+    id: 'pay-02',
+    paymentRef: 'PAY-2026-0021',
+    invoiceNumber: 'INV-2026-0008',
     paymentDate: '2026-01-20',
-    method: 'Corporate Wire (RTGS)',
     amount: 118000,
-    status: 'Confirmed',
+    method: 'RTGS Electronic Transfer',
+    status: 'Paid',
   },
 ];
 
@@ -57,8 +56,8 @@ export default function CustomerPaymentsPage() {
         if (data?.payments && data.payments.length > 0) {
           const mapped: PaymentHistoryItem[] = data.payments.map((p) => ({
             id: p.id,
-            paymentRef: p.payment_reference || `PAY-${p.id.slice(0, 8)}`,
-            invoiceNumber: 'On Account',
+paymentRef: (p as any).payment_reference || (p as any).payment_number || `PAY-${p.id.slice(0, 8)}`,
+            invoiceNumber: (p as any).invoice_id ? `INV-${(p as any).invoice_id.slice(0, 8)}` : 'On Account',
             paymentDate: p.payment_date,
             method:
               p.payment_method === 'bank_transfer'
@@ -84,7 +83,7 @@ export default function CustomerPaymentsPage() {
     {
       header: 'Payment Reference',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-slate-800">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.paymentRef}
         </span>
       ),
@@ -92,7 +91,7 @@ export default function CustomerPaymentsPage() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs text-indigo-600 font-medium">
+        <span className="font-mono text-xs text-[#211b15] font-medium">
           {item.invoiceNumber}
         </span>
       ),
@@ -104,16 +103,14 @@ export default function CustomerPaymentsPage() {
     {
       header: 'Method',
       cell: (item) => (
-        <span className="inline-flex rounded-md bg-slate-100 px-2 py-0.5 text-xs text-slate-700 font-medium">
+        <span className="inline-flex rounded-[3.75px] bg-[#efe9e0] border border-[#c7bcaf] px-2 py-0.5 text-xs text-[#211b15] font-medium">
           {item.method}
         </span>
       ),
     },
     {
       header: 'Amount Credited',
-      cell: (item) => (
-        <MoneyDisplay amount={item.amount} size="sm" className="font-semibold text-emerald-700" />
-      ),
+      cell: (item) => <MoneyDisplay amount={item.amount} size="sm" className="font-bold text-[#2b4c2b]" />,
     },
     {
       header: 'Allocation Status',
@@ -130,8 +127,8 @@ export default function CustomerPaymentsPage() {
     >
       <div className="space-y-6">
         <PageHeader
-          title="Payment History"
-          description="Record of verified manual and electronic payments allocated against your account."
+          title="Payment Receipts & History"
+          description="Verified bank allocations, electronic receipts, and credit confirmations against past invoices."
           breadcrumbs={[
             { label: 'Portal', href: '/portal' },
             { label: 'Payments' },

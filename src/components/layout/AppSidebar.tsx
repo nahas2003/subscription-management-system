@@ -46,34 +46,42 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   onCloseMobile,
   className,
 }) => {
-  // Navigation sections based on role
   const getNavSections = (): NavSection[] => {
     if (role === 'admin') {
       return [
         {
-          title: 'Core Operations',
           items: [
             { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-            { label: 'Customers', href: '/admin/customers', icon: Users },
-            { label: 'Quotations', href: '/admin/quotations', icon: FileText },
-            { label: 'Subscriptions', href: '/admin/subscriptions', icon: Repeat },
-            { label: 'Invoices', href: '/admin/invoices', icon: Receipt },
-            { label: 'Payments', href: '/admin/payments', icon: CreditCard },
           ],
         },
         {
           title: 'Catalogue & Pricing',
           items: [
             { label: 'Products', href: '/admin/products', icon: Package },
-            { label: 'Plans', href: '/admin/plans', icon: Calendar },
-            { label: 'Discounts', href: '/admin/discounts', icon: Percent },
+            { label: 'Subscription Plans', href: '/admin/plans', icon: Calendar },
+            { label: 'Discounts & Rules', href: '/admin/discounts', icon: Percent },
           ],
         },
         {
-          title: 'Management',
+          title: 'Sales & Operations',
           items: [
-            { label: 'Reports', href: '/admin/reports', icon: BarChart3 },
-            { label: 'Staff Management', href: '/admin/staff', icon: ShieldCheck },
+            { label: 'Customers', href: '/admin/customers', icon: Users },
+            { label: 'Quotations', href: '/admin/quotations', icon: FileText },
+            { label: 'Subscriptions', href: '/admin/subscriptions', icon: Repeat },
+          ],
+        },
+        {
+          title: 'Finance & Ledger',
+          items: [
+            { label: 'Invoices', href: '/admin/invoices', icon: Receipt },
+            { label: 'Payments', href: '/admin/payments', icon: CreditCard },
+            { label: 'Financial Reports', href: '/admin/reports', icon: BarChart3 },
+          ],
+        },
+        {
+          title: 'Administration',
+          items: [
+            { label: 'Staff & Team', href: '/admin/staff', icon: ShieldCheck },
           ],
         },
       ];
@@ -82,12 +90,21 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
     if (role === 'staff') {
       return [
         {
-          title: 'Operations',
           items: [
-            { label: 'Dashboard', href: '/staff/dashboard', icon: LayoutDashboard },
+            { label: 'Staff Dashboard', href: '/staff/dashboard', icon: LayoutDashboard },
+          ],
+        },
+        {
+          title: 'Operations Queue',
+          items: [
             { label: 'Customers', href: '/staff/customers', icon: Users },
             { label: 'Quotations', href: '/staff/quotations', icon: FileText },
             { label: 'Subscriptions', href: '/staff/subscriptions', icon: Repeat },
+          ],
+        },
+        {
+          title: 'Billing & Collection',
+          items: [
             { label: 'Invoices', href: '/staff/invoices', icon: Receipt },
             { label: 'Payments', href: '/staff/payments', icon: CreditCard },
           ],
@@ -95,16 +112,20 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       ];
     }
 
-    // Customer Portal Navigation (Strictly isolated)
+    // Customer Portal
     return [
       {
-        title: 'Customer Self-Service',
         items: [
-          { label: 'Overview', href: '/portal', icon: LayoutDashboard },
+          { label: 'My Overview', href: '/portal', icon: LayoutDashboard },
+        ],
+      },
+      {
+        title: 'Billing & Account',
+        items: [
           { label: 'My Subscriptions', href: '/portal/subscriptions', icon: Repeat },
           { label: 'My Invoices', href: '/portal/invoices', icon: Receipt },
-          { label: 'My Payments', href: '/portal/payments', icon: CreditCard },
-          { label: 'My Profile', href: '/portal/profile', icon: User },
+          { label: 'Payment History', href: '/portal/payments', icon: CreditCard },
+          { label: 'Company Profile', href: '/portal/profile', icon: User },
         ],
       },
     ];
@@ -114,44 +135,43 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
   return (
     <>
-      {/* Mobile backdrop overlay */}
+      {/* Mobile backdrop */}
       {isOpenMobile && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs lg:hidden"
           onClick={onCloseMobile}
+          className="fixed inset-0 z-40 bg-[#211b15]/40 backdrop-blur-xs lg:hidden"
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar container */}
+      {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-in-out lg:static lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-[#efe9e0] bg-white transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 font-sans',
           isOpenMobile ? 'translate-x-0' : '-translate-x-full',
           className
         )}
       >
         {/* Brand header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
+        <div className="flex h-16 items-center justify-between border-b border-[#efe9e0] px-5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#4F46E5] text-white shadow-xs">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[3.75px] bg-[#252a23] text-[#e8b672] shadow-sm">
               <Layers className="h-5 w-5" />
             </div>
             <div>
-              <span className="text-base font-bold tracking-tight text-slate-900">
-                Bright<span className="text-[#4F46E5]">Loop</span>
+              <span className="font-display text-xl font-bold tracking-tight text-[#211b15] leading-none">
+                BRIGHT<span className="text-[#8c591b]">LOOP</span>
               </span>
-              <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-medium">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-[#96897b] leading-none mt-1">
                 Subscription OS
               </span>
             </div>
           </div>
 
-          {/* Close button on mobile */}
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden"
+              className="rounded-[3.75px] p-1 text-[#50463c] hover:bg-[#efe9e0] hover:text-[#211b15] lg:hidden"
               aria-label="Close menu"
             >
               <X className="h-5 w-5" />
@@ -159,12 +179,12 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           )}
         </div>
 
-        {/* Navigation list */}
+        {/* Navigation items */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
           {sections.map((section, sIdx) => (
             <div key={sIdx} className="space-y-1">
               {section.title && (
-                <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#96897b]">
                   {section.title}
                 </div>
               )}
@@ -179,10 +199,10 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'group flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      'group flex items-center justify-between rounded-[3.75px] px-3 py-2 text-sm font-medium transition-all duration-150',
                       isActive
-                        ? 'bg-indigo-50 text-[#4F46E5] font-semibold'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        ? 'bg-[#fbf2e3] text-[#211b15] font-bold border-l-2 border-[#e8b672] shadow-xs'
+                        : 'text-[#50463c] hover:bg-[#efe9e0]/60 hover:text-[#211b15]'
                     )}
                   >
                     <div className="flex items-center gap-3">
@@ -190,8 +210,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                         className={cn(
                           'h-4 w-4 shrink-0 transition-colors',
                           isActive
-                            ? 'text-[#4F46E5]'
-                            : 'text-slate-400 group-hover:text-slate-600'
+                            ? 'text-[#8c591b]'
+                            : 'text-[#96897b] group-hover:text-[#211b15]'
                         )}
                       />
                       <span>{item.label}</span>
@@ -200,10 +220,10 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                     {item.badge !== undefined && (
                       <span
                         className={cn(
-                          'rounded-full px-2 py-0.5 text-xs font-semibold',
+                          'rounded-[3.75px] px-2 py-0.5 text-xs font-semibold',
                           isActive
-                            ? 'bg-indigo-200 text-[#4F46E5]'
-                            : 'bg-slate-100 text-slate-600'
+                            ? 'bg-white text-[#211b15] border border-[#c7bcaf]/60'
+                            : 'bg-[#efe9e0] text-[#50463c]'
                         )}
                       >
                         {item.badge}
@@ -216,15 +236,16 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           ))}
         </div>
 
-        {/* System & version footer */}
-        <div className="border-t border-slate-100 p-4">
-          <div className="rounded-lg bg-slate-50 p-2.5 text-center">
-            <span className="text-[11px] font-medium text-slate-500 block">
-              Odoo x Make-A-Ton 9.0
-            </span>
-            <span className="text-[10px] text-slate-400">
-              Single-Company Architecture
-            </span>
+        {/* Footer info block */}
+        <div className="border-t border-[#efe9e0] p-4 bg-[#fcfaf1]">
+          <div className="rounded-[3.75px] bg-[#efe9e0]/70 p-3 text-xs text-[#50463c] border border-[#c7bcaf]/40">
+            <div className="flex items-center justify-between font-bold text-[#211b15]">
+              <span>Single Company</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#7a9779]" />
+            </div>
+            <p className="mt-1 text-[11px] text-[#96897b] leading-tight">
+              BrightLoop Core v1.0 • Odoo Make-A-Ton
+            </p>
           </div>
         </div>
       </aside>

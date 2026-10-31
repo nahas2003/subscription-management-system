@@ -1,26 +1,33 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatCard } from '@/components/ui/StatCard';
-import { StatusBadge } from '@/components/ui/StatusBadge';
+import { StatusBadge, SubscriptionStatus, InvoiceStatus } from '@/components/ui/StatusBadge';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { DateDisplay } from '@/components/ui/DateDisplay';
 import { DataTable, Column } from '@/components/ui/DataTable';
-import { Repeat, Calendar, Receipt, CreditCard, ExternalLink, ShieldCheck, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import {
+  Repeat,
+  Calendar,
+  Receipt,
+  CreditCard,
+  ShieldCheck,
+  ExternalLink,
+  Loader2,
+} from 'lucide-react';
 import { getCustomerPortalData, PortalOverviewData } from '@/lib/actions/portal';
 
 interface CustomerSubscription {
   id: string;
-  planName: string;
   productName: string;
+  planName: string;
   frequency: string;
   price: number;
-  startDate: string;
   nextRenewal: string;
-  status: 'Active' | 'Draft' | 'Closed';
+  status: SubscriptionStatus;
 }
 
 interface CustomerInvoice {
@@ -29,27 +36,25 @@ interface CustomerInvoice {
   dueDate: string;
   total: number;
   balanceDue: number;
-  status: 'Paid' | 'Confirmed' | 'Draft' | 'Overdue';
+  status: InvoiceStatus;
 }
 
 const mockSubscriptions: CustomerSubscription[] = [
   {
-    id: 'sub-001',
-    planName: 'Enterprise Annual Plan',
+    id: 'sub-01',
     productName: 'Quality Management System',
+    planName: 'Enterprise Annual Plan',
     frequency: 'Yearly',
     price: 118000,
-    startDate: '2026-01-15',
     nextRenewal: '2027-01-15',
     status: 'Active',
   },
   {
-    id: 'sub-002',
-    planName: 'Pro Monthly Support',
+    id: 'sub-02',
     productName: 'Managed Cloud Infrastructure',
+    planName: 'Pro Monthly Support',
     frequency: 'Monthly',
     price: 15000,
-    startDate: '2026-10-01',
     nextRenewal: '2026-11-01',
     status: 'Active',
   },
@@ -57,7 +62,7 @@ const mockSubscriptions: CustomerSubscription[] = [
 
 const mockInvoices: CustomerInvoice[] = [
   {
-    id: 'inv-101',
+    id: 'inv-01',
     invoiceNumber: 'INV-2026-0042',
     dueDate: '2026-11-05',
     total: 17700,
@@ -65,18 +70,10 @@ const mockInvoices: CustomerInvoice[] = [
     status: 'Confirmed',
   },
   {
-    id: 'inv-100',
+    id: 'inv-02',
     invoiceNumber: 'INV-2026-0019',
     dueDate: '2026-10-05',
     total: 17700,
-    balanceDue: 0,
-    status: 'Paid',
-  },
-  {
-    id: 'inv-095',
-    invoiceNumber: 'INV-2026-0005',
-    dueDate: '2026-09-05',
-    total: 118000,
     balanceDue: 0,
     status: 'Paid',
   },
@@ -112,7 +109,7 @@ export default function CustomerPortalOverview() {
           price: 15000,
           startDate: s.start_date || s.created_at.slice(0, 10),
           nextRenewal: s.next_billing_date || s.expiry_date || '2027-01-01',
-          status: s.status === 'active' ? 'Active' : s.status === 'draft' ? 'Draft' : 'Closed',
+          status: (s.status === 'active' ? 'Active' : s.status === 'draft' ? 'Draft' : 'Closed') as SubscriptionStatus,
         }))
       : mockSubscriptions;
 
@@ -124,7 +121,7 @@ export default function CustomerPortalOverview() {
           dueDate: i.due_date || i.invoice_date,
           total: i.total,
           balanceDue: i.balance_due,
-          status: i.status === 'paid' ? 'Paid' : i.status === 'confirmed' ? 'Confirmed' : 'Draft',
+          status: (i.status === 'paid' ? 'Paid' : i.status === 'confirmed' ? 'Confirmed' : 'Draft') as InvoiceStatus,
         }))
       : mockInvoices;
 
@@ -148,8 +145,8 @@ export default function CustomerPortalOverview() {
       header: 'Product / Plan',
       cell: (item) => (
         <div>
-          <div className="font-semibold text-slate-900">{item.productName}</div>
-          <div className="text-xs text-slate-500">{item.planName} ({item.frequency})</div>
+          <div className="font-bold text-[#211b15]">{item.productName}</div>
+          <div className="text-xs text-[#96897b]">{item.planName} ({item.frequency})</div>
         </div>
       ),
     },
@@ -171,7 +168,7 @@ export default function CustomerPortalOverview() {
     {
       header: 'Invoice #',
       cell: (item) => (
-        <span className="font-mono text-xs font-semibold text-indigo-600">
+        <span className="font-mono text-xs font-bold text-[#8c591b]">
           {item.invoiceNumber}
         </span>
       ),
@@ -190,7 +187,7 @@ export default function CustomerPortalOverview() {
         <MoneyDisplay
           amount={item.balanceDue}
           size="sm"
-          className={item.balanceDue > 0 ? 'font-bold text-amber-700' : 'text-slate-500'}
+          className={item.balanceDue > 0 ? 'font-bold text-[#b83a2b]' : 'text-[#50463c]'}
         />
       ),
     },
@@ -212,8 +209,8 @@ export default function CustomerPortalOverview() {
           title="Customer Overview"
           description="Manage your active subscriptions, view billing history, and review statements."
           action={
-            <div className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-1.5 border border-emerald-200 text-xs font-semibold text-emerald-800">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            <div className="flex items-center gap-2 rounded-[3.75px] bg-white border border-[#efe9e0] px-3 py-1.5 text-xs font-bold text-[#2b4c2b] shadow-xs">
+              <ShieldCheck className="h-4 w-4 text-[#7a9779]" />
               <span>Isolated Customer Access</span>
             </div>
           }
@@ -229,7 +226,7 @@ export default function CustomerPortalOverview() {
           />
           <StatCard
             title="Next Renewal Date"
-            value="01 Nov 2026"
+            value="01 Nov"
             subtitle="Pro Monthly Support"
             icon={Calendar}
           />
@@ -250,10 +247,10 @@ export default function CustomerPortalOverview() {
         {/* Active Subscriptions Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-slate-900">Your Subscriptions</h2>
+            <h2 className="font-display text-2xl font-bold text-[#211b15]">YOUR SUBSCRIPTIONS</h2>
             <Link
               href="/portal/subscriptions"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA]"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#8c591b] hover:underline"
             >
               <span>View all subscriptions</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -270,10 +267,10 @@ export default function CustomerPortalOverview() {
         {/* Recent Invoices Section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-slate-900">Recent Invoices</h2>
+            <h2 className="font-display text-2xl font-bold text-[#211b15]">RECENT INVOICES</h2>
             <Link
               href="/portal/invoices"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA]"
+              className="inline-flex items-center gap-1 text-xs font-bold text-[#8c591b] hover:underline"
             >
               <span>View all invoices</span>
               <ExternalLink className="h-3.5 w-3.5" />

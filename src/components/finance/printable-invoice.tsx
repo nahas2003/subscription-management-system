@@ -110,7 +110,7 @@ export const PrintableInvoice: React.FC<PrintableInvoiceProps> = ({
                   <td className="py-2.5 px-3 font-medium text-slate-900">{l.description_snapshot}</td>
                   <td className="py-2.5 px-3 text-right">{l.quantity}</td>
                   <td className="py-2.5 px-3 text-right font-mono"><MoneyDisplay amount={l.unit_price} /></td>
-                  <td className="py-2.5 px-3 text-right">{(((l.tax_rate_snapshot ?? l.tax_rate ?? 0.18)) * 100).toFixed(0)}%</td>
+<td className="py-2.5 px-3 text-right">{(((l.tax_rate_snapshot ?? l.tax_rate ?? 0.18)) * 100).toFixed(0)}%</td>
                   <td className="py-2.5 px-3 text-right font-mono"><MoneyDisplay amount={l.tax_amount} /></td>
                   <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900"><MoneyDisplay amount={l.line_total} /></td>
                 </tr>
