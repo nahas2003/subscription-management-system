@@ -15,6 +15,7 @@ import {
   Layers,
   ShieldCheck,
   ArrowRight,
+  Clock,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -28,6 +29,7 @@ export default function SubscriptionDetailPage() {
   const subId = params.id as string;
 
   const [sub, setSub] = useState(store.getSubscriptionById(subId));
+  const [events, setEvents] = useState(store.getSubscriptionEvents(subId));
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -58,7 +60,8 @@ export default function SubscriptionDetailPage() {
       setError(result.error || 'Transition failed');
     } else {
       setSub(store.getSubscriptionById(sub.id));
-      setSuccess(`Subscription state updated successfully to "${newStatus.toUpperCase()}".`);
+      setEvents(store.getSubscriptionEvents(sub.id));
+      setSuccess(`Subscription successfully moved to ${newStatus.toUpperCase()}`);
     }
   };
 
@@ -68,113 +71,106 @@ export default function SubscriptionDetailPage() {
 
     const result = store.togglePauseSubscription(sub.id);
     if (!result.success) {
-      setError(result.error || 'Pause toggle failed');
+      setError(result.error || 'Pause/Resume failed');
     } else {
       setSub(store.getSubscriptionById(sub.id));
-      setSuccess(
-        result.is_paused
-          ? 'Subscription has been PAUSED. Recurring billing will be held until resumed.'
-          : 'Subscription has been RESUMED to live active billing.'
-      );
+      setEvents(store.getSubscriptionEvents(sub.id));
+      setSuccess(`Subscription ${result.is_paused ? 'paused' : 'resumed'} successfully.`);
     }
   };
 
-  const recurringTotal = sub.lines.reduce((sum, l) => sum + l.line_total, 0);
+  const recurringTotal = sub.lines.reduce((acc, line) => acc + line.line_total, 0);
 
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div className="flex items-center gap-2">
-        <Link
-          href="/subscriptions"
-          className="text-xs text-slate-500 hover:text-indigo-600 flex items-center gap-1 font-medium"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to Subscriptions
-        </Link>
-      </div>
-
+    <div className="space-y-6">
       <PageHeader
-        title={`Subscription: ${sub.subscription_number}`}
-        description={`Customer commitment for ${sub.customer?.name || 'Customer'}`}
+        title={sub.subscription_number}
+        description={`Lifecycle state: ${sub.status.toUpperCase()} • Client: ${sub.customer?.name || 'Customer'}`}
         actions={
           <div className="flex items-center gap-2">
-            <StatusBadge status={sub.status} />
-            {sub.is_paused && <StatusBadge status="paused" />}
+            <Link
+              href="/subscriptions"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back
+            </Link>
 
-            {/* Pause/Resume button (Active status only) */}
             {sub.status === 'active' && (
               <button
                 onClick={handleTogglePause}
-                className="px-3.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors flex items-center gap-1.5 bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg shadow-sm transition-colors ${
+                  sub.is_paused
+                    ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    : 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300'
+                }`}
               >
-                {sub.is_paused ? (
-                  <>
-                    <PlayCircle className="w-3.5 h-3.5 text-emerald-600" /> Resume Subscription
-                  </>
-                ) : (
-                  <>
-                    <PauseCircle className="w-3.5 h-3.5 text-amber-600" /> Pause Subscription
-                  </>
-                )}
+                {sub.is_paused ? <PlayCircle className="w-3.5 h-3.5" /> : <PauseCircle className="w-3.5 h-3.5" />}
+                {sub.is_paused ? 'Resume Service' : 'Pause Service'}
               </button>
             )}
           </div>
         }
       />
 
-      {success && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-sm flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>{success}</span>
-        </div>
-      )}
-
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg text-sm flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-sm flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* Lifecycle Progression Control Panel */}
+      {success && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-sm flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 shrink-0" />
+          <span>{success}</span>
+        </div>
+      )}
+
+      {/* Lifecycle Progress Bar */}
       <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <Repeat className="w-4 h-4 text-indigo-600" />
-            <span>Documented Lifecycle State Machine</span>
-          </div>
-          <div className="text-xs text-slate-400">
-            Current: <strong className="text-indigo-600 uppercase font-mono">{sub.status}</strong>
-          </div>
+        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+          Strict Subscription Lifecycle Sequence (Draft &rarr; Quotation &rarr; Confirmed &rarr; Active &rarr; Closed)
         </div>
 
-        {/* State Pipeline Diagram */}
-        <div className="grid grid-cols-5 gap-2 text-center text-xs mb-6">
-          {(['draft', 'quotation', 'confirmed', 'active', 'closed'] as SubscriptionStatus[]).map(
-            (stage, idx) => {
-              const isCurrent = sub.status === stage;
-              return (
+        <div className="flex items-center justify-between relative max-w-3xl">
+          {['draft', 'quotation', 'confirmed', 'active', 'closed'].map((stage, idx) => {
+            const stages = ['draft', 'quotation', 'confirmed', 'active', 'closed'];
+            const currentIdx = stages.indexOf(sub.status === 'paused' ? 'active' : sub.status);
+            const isCompleted = idx < currentIdx;
+            const isCurrent = stages[idx] === (sub.status === 'paused' ? 'active' : sub.status);
+
+            return (
+              <div key={stage} className="flex flex-col items-center z-10">
                 <div
-                  key={stage}
-                  className={`p-3 rounded-lg border font-semibold uppercase tracking-wider ${
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
                     isCurrent
-                      ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm'
-                      : 'bg-slate-50 text-slate-400 border-slate-200'
+                      ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 shadow-md scale-110'
+                      : isCompleted
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-100 text-slate-400 border border-slate-200'
                   }`}
                 >
-                  <div className="text-[10px] font-normal opacity-70 mb-0.5">Step {idx + 1}</div>
-                  {stage}
+                  {isCompleted ? <CheckCircle className="w-4 h-4" /> : idx + 1}
                 </div>
-              );
-            }
-          )}
+                <span
+                  className={`text-[11px] font-semibold mt-2 uppercase tracking-wider ${
+                    isCurrent ? 'text-indigo-600 font-bold' : isCompleted ? 'text-emerald-700' : 'text-slate-400'
+                  }`}
+                >
+                  {stage}
+                </span>
+              </div>
+            );
+          })}
+          <div className="absolute top-4 left-6 right-6 h-0.5 bg-slate-200 -z-0" />
         </div>
 
-        {/* Transition Action Buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+        {/* Transition Controls */}
+        <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
           <div className="text-xs text-slate-500">
-            {allowedNext.length > 0
-              ? `Allowed state transitions: ${allowedNext.map((s: string) => `"${s.toUpperCase()}"`).join(', ')}`
-              : 'This subscription is in the terminal "CLOSED" state. No future recurring invoices will be produced.'}
+            Current State: <span className="font-bold text-slate-900 uppercase">{sub.status}</span>
+            {sub.is_paused && <span className="ml-2 text-amber-600 font-semibold">(Service Paused)</span>}
           </div>
 
           <div className="flex items-center gap-2">
@@ -273,6 +269,52 @@ export default function SubscriptionDetailPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Audit & Lifecycle Transition History */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-200 font-semibold text-sm text-slate-900 bg-slate-50 flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-indigo-600" />
+            <span>Audit & Lifecycle Transition History (Document 04 §6.3)</span>
+          </span>
+          <span className="text-xs text-slate-500 font-normal">
+            {events.length} recorded event{events.length === 1 ? '' : 's'}
+          </span>
+        </div>
+        {events.length === 0 ? (
+          <div className="p-6 text-center text-xs text-slate-400">No transition events recorded yet.</div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {events.map((evt) => (
+              <div key={evt.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded font-semibold uppercase tracking-wider bg-slate-100 text-slate-700">
+                      {evt.event_type.replace('_', ' ')}
+                    </span>
+                    <span className="font-semibold text-slate-900">
+                      {evt.from_status ? (
+                        <>
+                          <span className="text-slate-500 uppercase">{evt.from_status}</span>
+                          <span className="mx-1 text-slate-400">&rarr;</span>
+                          <span className="text-indigo-600 uppercase font-bold">{evt.to_status}</span>
+                        </>
+                      ) : (
+                        <span className="text-emerald-600 uppercase font-bold">{evt.to_status}</span>
+                      )}
+                    </span>
+                  </div>
+                  {evt.notes && <div className="text-slate-600">{evt.notes}</div>}
+                </div>
+                <div className="text-right text-slate-400">
+                  <div className="font-medium text-slate-600">{evt.actor_name || 'Staff / Admin'}</div>
+                  <div>{formatDate(evt.created_at)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
