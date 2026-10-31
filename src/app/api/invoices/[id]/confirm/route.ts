@@ -9,7 +9,7 @@ import { transitionToConfirmed } from '@/features/invoices/invoice-service';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { NextResponse } from 'next/server';
 
-export async function handleConfirmInvoice(invoiceId: string) {
+async function handleConfirmInvoice(invoiceId: string) {
   try {
     const existing = await invoiceRepository.getInvoiceById(invoiceId);
     if (!existing) {

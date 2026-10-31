@@ -56,7 +56,7 @@ export default function CustomerPaymentsPage() {
         if (data?.payments && data.payments.length > 0) {
           const mapped: PaymentHistoryItem[] = data.payments.map((p) => ({
             id: p.id,
-            paymentRef: (p as any).payment_number || (p as any).payment_reference || `PAY-${p.id.slice(0, 8)}`,
+paymentRef: (p as any).payment_reference || (p as any).payment_number || `PAY-${p.id.slice(0, 8)}`,
             invoiceNumber: (p as any).invoice_id ? `INV-${(p as any).invoice_id.slice(0, 8)}` : 'On Account',
             paymentDate: p.payment_date,
             method:

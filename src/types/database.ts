@@ -197,8 +197,8 @@ export interface QuotationLine {
   product_id: string | null;
   variant_id: string | null;
   plan_id?: string | null;
-  description_snapshot: string;
   description?: string;
+  description_snapshot: string;
   quantity: number;
   unit_price: number;
   discount_amount?: number;
@@ -215,6 +215,7 @@ export interface QuotationLineRow {
   product_id: string | null;
   variant_id: string | null;
   plan_id: string | null;
+  description?: string;
   description_snapshot: string;
   quantity: number;
   unit_price: number;
@@ -273,6 +274,7 @@ export interface SubscriptionLine {
   product_id: string | null;
   variant_id: string | null;
   plan_id?: string | null;
+  description?: string;
   description_snapshot: string;
   quantity: number;
   unit_price: number;
@@ -288,6 +290,7 @@ export interface SubscriptionLineRow {
   product_id: string | null;
   variant_id: string | null;
   plan_id: string | null;
+  description?: string;
   description_snapshot: string;
   quantity: number;
   unit_price: number;
@@ -324,13 +327,14 @@ export interface InvoiceLine {
   invoice_id: string;
   product_id: string | null;
   variant_id: string | null;
+  description?: string;
   description_snapshot: string;
   quantity: number;
   unit_price: number;
   discount_amount: number;
+  taxable_amount?: number;
   tax_rate_snapshot: number;
   tax_amount: number;
-  taxable_amount?: number;
   line_total: number;
 }
 
@@ -339,6 +343,8 @@ export type PaymentMethod = 'bank_transfer' | 'upi' | 'credit_card' | 'cash' | '
 export interface Payment {
   id: string;
   payment_reference: string;
+payment_number?: string;
+  invoice_id?: string | null;
   reference?: string | null;
   status?: string;
   customer_id: string;
@@ -355,8 +361,8 @@ export interface PaymentAllocation {
   payment_id: string;
   invoice_id: string;
   amount_allocated: number;
-  allocated_at?: string;
   amount?: number;
+  allocated_at?: string;
   created_at: string;
 }
 

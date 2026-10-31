@@ -10,7 +10,7 @@ import { recordInvoicePayment } from '@/features/payments/payment-service';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { NextResponse } from 'next/server';
 
-export async function handleGetPayments(queryParams: Record<string, string | undefined>) {
+async function handleGetPayments(queryParams: Record<string, string | undefined>) {
   try {
     const filters = {
       customerId: queryParams.customerId,
@@ -25,7 +25,7 @@ export async function handleGetPayments(queryParams: Record<string, string | und
   }
 }
 
-export async function handlePostPayment(payload: any) {
+async function handlePostPayment(payload: any) {
   try {
     if (!payload.customerId) {
       return errorResponse('Customer ID is required', 'VALIDATION_ERROR', { customerId: 'Required' });

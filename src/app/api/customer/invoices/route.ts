@@ -8,7 +8,7 @@ import { invoiceRepository } from '@/features/invoices/invoice-repository';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { NextResponse } from 'next/server';
 
-export async function handleGetCustomerInvoices(authenticatedCustomerId: string) {
+async function handleGetCustomerInvoices(authenticatedCustomerId: string) {
   try {
     if (!authenticatedCustomerId) {
       return errorResponse('Authentication required. Customer identity missing.', 'UNAUTHORIZED');

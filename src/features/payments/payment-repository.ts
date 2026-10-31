@@ -20,6 +20,7 @@ let inMemoryAllocations: Map<string, PaymentAllocation[]> = new Map();
 function seedInitialPayments() {
   const p1: Payment = {
     id: 'pay-001',
+    payment_reference: 'PAY-2026-001',
     payment_number: 'PAY-2026-001',
     customer_id: 'cust-002',
     invoice_id: 'inv-002',
@@ -34,6 +35,7 @@ function seedInitialPayments() {
 
   const p2: Payment = {
     id: 'pay-002',
+    payment_reference: 'PAY-2026-002',
     payment_number: 'PAY-2026-002',
     customer_id: 'cust-003',
     invoice_id: 'inv-003',
@@ -54,8 +56,8 @@ function seedInitialPayments() {
       id: 'alloc-001',
       payment_id: 'pay-001',
       invoice_id: 'inv-002',
-      amount: 35400,
       amount_allocated: 35400,
+      amount: 35400,
       allocated_at: '2026-10-12T16:00:00Z',
     },
   ]);
@@ -65,8 +67,8 @@ function seedInitialPayments() {
       id: 'alloc-002',
       payment_id: 'pay-002',
       invoice_id: 'inv-003',
-      amount: 5000,
       amount_allocated: 5000,
+      amount: 5000,
       allocated_at: '2026-10-05T11:00:00Z',
     },
   ]);
