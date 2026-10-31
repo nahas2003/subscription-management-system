@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
-import { Menu, Bell, User, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { Menu, User, LogOut, ArrowLeftRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type UserRole = 'admin' | 'staff' | 'customer';
@@ -55,6 +58,47 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Quick Role Switcher for Hackathon Demonstrations */}
+        <div className="hidden sm:flex items-center gap-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg p-1">
+          <span className="text-slate-400 pl-1.5 text-[11px] font-medium flex items-center gap-1">
+            <ArrowLeftRight className="h-3 w-3" />
+            Switch:
+          </span>
+          <Link
+            href="/admin/dashboard"
+            className={cn(
+              'px-2 py-0.5 rounded text-[11px] font-medium transition-colors',
+              user.role === 'admin'
+                ? 'bg-purple-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-purple-600'
+            )}
+          >
+            Admin
+          </Link>
+          <Link
+            href="/staff/dashboard"
+            className={cn(
+              'px-2 py-0.5 rounded text-[11px] font-medium transition-colors',
+              user.role === 'staff'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-blue-600'
+            )}
+          >
+            Staff
+          </Link>
+          <Link
+            href="/portal"
+            className={cn(
+              'px-2 py-0.5 rounded text-[11px] font-medium transition-colors',
+              user.role === 'customer'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-emerald-600'
+            )}
+          >
+            Customer
+          </Link>
+        </div>
+
         {/* Role badge */}
         <span
           className={cn(
@@ -84,8 +128,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         {onLogout && (
           <button
             onClick={onLogout}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-red-600 transition-colors ml-1"
-            title="Log out"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors ml-1"
+            title="Log out from session"
             aria-label="Log out"
           >
             <LogOut className="h-4 w-4" />
